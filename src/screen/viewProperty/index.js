@@ -28,7 +28,7 @@ const ViewProperty = () => {
   useEffect(() => {
     LogBox.ignoreLogs(['Warning message']);
     createTable()
-    if (propertyDatas != null) {
+    if (propertyDatas != null &&  propertyDatas != undefined) {
       editData(propertyDatas)
     }
   }, []);

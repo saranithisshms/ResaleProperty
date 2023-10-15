@@ -71,14 +71,14 @@ const CreateProperty = () => {
 
   }
 
-  const { propertyDatas } = route.params;
+  const propertyDatas = route.params?.propertyDatas ?? null;
 
-  console.log('getData>>>>', propertyDatas)
+  // console.log('getData>>>>', propertyDatas)
 
   useEffect(() => {
     LogBox.ignoreLogs(['Warning message']);
     createTable()
-    if (propertyDatas != null) {
+    if (propertyDatas != null && propertyDatas != undefined) {
       editData(propertyDatas)
     }
   }, []);

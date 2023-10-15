@@ -64,13 +64,13 @@ const PropertyListing = () => {
           setPropertyData(userDataList)
         },
         (_, error) => {
-          console.error('Error fetching data:', error);
+          console.error('Error fetching data:',);
         }
       );
     });
 
   }
-  console.log('propertList', propertyData)
+  // console.log('propertList', propertyData)
 
 
   const onEditPress = (item) => {
@@ -128,27 +128,35 @@ const PropertyListing = () => {
       />
       <ScrollView>
         <View>
+          {propertyData.length != 0 ?
+            <>
+              {
+                propertyData.map((user) => {
+                  return (
+                    <View key={user.id}>
+                      <PropertyCard
+                        name={user.propertyName}
+                        descripition={user.descripition}
+                        onEditPress={() => onEditPress(user)}
+                        onDeletePress={() => onDeletePress(user.id)}
 
-          {
-            propertyData.map((user) => {
-              return (
-                <View key={user.id}>
-                  <PropertyCard
-                    name={user.propertyName}
-                    descripition={user.descripition}
-                    onEditPress={() => onEditPress(user)}
-                    onDeletePress={() => onDeletePress(user.id)}
+                      />
+                    </View>
+                  );
+                })
+              }
+            </> :
 
-                  />
-                </View>
-              );
-            })
-          }
+            <View>
+              <Text>No Property So Far Not Add</Text>
+            </View>}
 
         </View>
+
+
       </ScrollView>
     </View>
-    
+
   );
 };
 
