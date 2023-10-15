@@ -1,25 +1,40 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, LogBox, ScrollView } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, LogBox, ScrollView, Alert } from 'react-native';
 
 import colors from '../../styles/colors';
 import { Header, HeaderProps, } from '@rneui/themed';
 import { NavigationProp, useNavigation, useRoute } from '@react-navigation/native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import PropertyCard from '../../components/propertyListing';
 import { TextInput } from 'react-native-paper';
 import { type, PropertyType, owernerType, PossessionStatus, BHK, Bathroom, Carparking, TwoWheerlerparking, FurnishedType, Faceing, securtyDespoit, overlooking, Flooring, NooFLift } from '../../JsonData'; // Adjust the import path accordingly
 import SelectableChip from '../../components/chips';
 import { DimensionUtils } from '../../styles/dimension';
+import SQLite from 'react-native-sqlite-storage';
+
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 
 // import Toast from 'react-native-simple-toast';
 
 const CreateProperty = () => {
 
-  //   const route = useRoute();
-  //   const tripId = route.params?.tripId;
-  //   console.log(tripId)
+
+  const route = useRoute();
+  const [propertyData, setPropertyData] = useState([]);
+  const db = SQLite.openDatabase(
+    {
+      name: 'propertyData.db',
+      location: 'default',
+    },
+    () => {
+      console.log('Database opened successfully');
+    },
+    (error) => {
+      console.error('Error opening database: ', error);
+    }
+  );
+
+
+
   const navigation = useNavigation();
 
   const [createProperty, setCreateProperty] = useState({
@@ -31,137 +46,378 @@ const CreateProperty = () => {
     months: '',
     monthlyRent: '',
     BulilderName: '',
-    maintenaceCharges: ''
+    maintenaceCharges: '',
+    type: '',
+    propertytype: '',
+    owernertype: '',
+    possessionstatus: '',
+    bhk: '',
+    bathroom: '',
+    furnishedtype: '',
+    carparking: '',
+    twowheelerparking: '',
+    faceing: '',
+    securitydeposit: '',
+    overlooking: '',
+    flooring: '',
+    lifts: ''
+
 
   });
 
 
-  //   const db = SQLite.openDatabase(
-  //     {
-  //       name: 'usertrip.db',
-  //       location: 'default',
-  //     },
-  //     () => {
-  //       console.log('Database opened successfully');
-  //     },
-  //     (error) => {
-  //       console.error('Error opening database: ', error);
-  //     }
-  //   );
-
-  //   useEffect(() => {
-  //     // Retrieve the user_id from AsyncStorage
-  //     AsyncStorage.getItem('SET_USER_DATA')
-  //       .then((user_id) => {
-  //         // Fetch user data from the database based on user_id
-  //         if (user_id) {
-  //           db.transaction((tx) => {
-  //             tx.executeSql(
-  //               'SELECT * FROM tasks WHERE userId = ? AND tripId = ?',
-  //               [user_id, tripId],
-  //               (tx, results) => {
-  //                 const tasks = [];
-  //                 for (let i = 0; i < results.rows.length; i++) {
-  //                   const task = results.rows.item(i);
-  //                   tasks.push(task);
-  //                 }
-  //                 setUserTask(tasks)
-  //                 console.log('Tasks for user and trip:', tasks);
-  //               },
-  //               (error) => {
-  //                 console.error('Error querying tasks:', error);
-  //               }
-  //             );
-  //           });
-  //         }
-  //       })
-  //       .catch((error) => {
-  //         console.error('Error retrieving user_id from AsyncStorage: ', error);
-  //       });
-  //   }, []);
 
   const onEditPress = (id) => {
 
   }
 
+  const { propertyDatas } = route.params;
 
+  console.log('getData>>>>', propertyDatas)
 
   useEffect(() => {
     LogBox.ignoreLogs(['Warning message']);
-
+    createTable()
+    if (propertyDatas != null) {
+      editData(propertyDatas)
+    }
   }, []);
 
 
-  const onDeletePress = (id) => {
-    // db.transaction((tx) => {
-    //   tx.executeSql(
-    //     'DELETE FROM tasks WHERE  Id = ?',
-    //     [id], // Pass the ID of the task you want to delete
-    //     (tx, results) => {
-    //       if (results.rowsAffected > 0) {
-    //         Toast.show('Task deleted successfully', Toast.SHORT);
-    //       } else {
-    //         console.error('No task found with the given ID');
-    //       }
-    //     },
-    //     (error) => {
-    //       console.error('Error deleting task:', error);
-    //     }
-    //   );
-    // });
+  const editData = (propertyDatas) => {
+
+    setCreateProperty({
+      ...createProperty,
+
+      propertyName: propertyDatas.propertyName,
+      descripition: propertyDatas.descripition,
+      BuildupArea: propertyDatas.BuildupArea,
+      sqft: propertyDatas.sqft,
+      AgeofProperty: propertyDatas.AgeofProperty,
+      months: propertyDatas.months,
+      monthlyRent: propertyDatas.monthlyRent,
+      BulilderName: propertyDatas.BulilderName,
+      maintenaceCharges: propertyDatas.maintenaceCharge,
+      type: propertyDatas.type,
+      propertytype: propertyDatas.propertytype,
+      owernertype: propertyDatas.owernertype,
+      possessionstatus: propertyDatas.possessionstatus,
+      bhk: propertyDatas.bhk,
+      bathroom: propertyDatas.bathroom,
+      furnishedtype: propertyDatas.furnishedtype,
+      carparking: propertyDatas.carparking,
+      twowheelerparking: propertyDatas.twowheelerparking,
+      faceing: propertyDatas.faceing,
+      securitydeposit: propertyDatas.securitydeposit,
+      overlooking: propertyDatas.overlooking,
+      flooring: propertyDatas.flooring,
+      lifts: propertyDatas.lifts
+
+    })
+
+
   }
 
-  const userTask = [
 
-    {
-      "id": "1",
-      "name": "fofdsods",
+  const createTable = () => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        `
+        CREATE TABLE IF NOT EXISTS Properties (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          propertyName TEXT,
+          descripition TEXT,
+          BuildupArea REAL,
+          sqft REAL,
+          AgeofProperty TEXT,
+          months INTEGER,
+          monthlyRent REAL,
+          BulilderName TEXT,
+          maintenaceCharges REAL,
+          type TEXT,
+          propertytype TEXT,
+          owernertype TEXT,
+          possessionstatus TEXT,
+          bhk INTEGER,
+          bathroom INTEGER,
+          furnishedtype TEXT,
+          carparking TEXT,
+          twowheelerparking TEXT,
+          faceing TEXT,
+          securitydeposit REAL,
+          overlooking TEXT,
+          flooring TEXT,
+          lifts TEXT
+        )
+        `,
+        [],
+        () => {
+          //  console.log('Table created successfully');
+        },
+        (_, error) => {
+          //console.error('Error creating table:', error);
+        }
+      );
+    });
+  }
 
 
+  const handleChipSelection = (label, type) => {
 
-    },
-    {
-      "id": "2",
-      "name": "dsdskdnsoid",
+    if (type == "type") {
 
+      setCreateProperty({ ...createProperty, type: label.name })
+
+    } else if (type == "propertyType") {
+
+      setCreateProperty({ ...createProperty, propertytype: label.name })
+
+    } else if (type == "owernerType") {
+
+      setCreateProperty({ ...createProperty, owernertype: label.name })
+
+    } else if (type == "possessionStatus") {
+
+      setCreateProperty({ ...createProperty, possessionstatus: label.name })
+
+    } else if (type == "bhk") {
+
+      setCreateProperty({ ...createProperty, bhk: label.name })
+
+    } else if (type == "bathroom") {
+
+      setCreateProperty({ ...createProperty, bathroom: label.name })
+
+    } else if (type == "furnishedtype") {
+
+      setCreateProperty({ ...createProperty, furnishedtype: label.name })
+
+    } else if (type == "carparking") {
+
+      setCreateProperty({ ...createProperty, carparking: label.name })
+
+    } else if (type == "twowheelerparking") {
+
+      setCreateProperty({ ...createProperty, twowheelerparking: label.name })
 
     }
-  ]
+    else if (type == "facing") {
 
-  const chipsData = ['Item 1', 'Item 2', 'Item 3', 'Item 4'];
+      setCreateProperty({ ...createProperty, faceing: label.name })
 
-  const [selectedChips, setSelectedChips] = useState([]);
+    } else if (type == "securitydeposit") {
 
-  const handleChipSelection = (label) => {
-    // Toggle selection
-    if (selectedChips.includes(label)) {
-      setSelectedChips(selectedChips.filter((chip) => chip !== label));
-    } else {
-      setSelectedChips([...selectedChips, label]);
+      setCreateProperty({ ...createProperty, securitydeposit: label.name })
+
+    } else if (type == "overlooking") {
+
+      setCreateProperty({ ...createProperty, overlooking: label.name })
+
+    } else if (type == "flooring") {
+
+      setCreateProperty({ ...createProperty, flooring: label.name })
+
+    } else if (type == "lifts") {
+
+      setCreateProperty({ ...createProperty, lifts: label.name })
+
     }
+
   };
 
+  // Define the saveValidation function
+  function saveValidation() {
+    if (
+      createProperty.name !== '' &&
+      createProperty.BulilderName !== '' &&
+      createProperty.BuildupArea !== '' &&
+      createProperty.sqft !== '' &&
+      createProperty.AgeofProperty !== '' &&
+      createProperty.months !== '' &&
+      createProperty.type !== '' &&
+      createProperty.owernertype !== '' &&
+      createProperty.bhk !== '' &&
+      createProperty.bathroom !== '' &&
+      createProperty.faceing !== ''
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  const isValid = saveValidation();
+
+  /// SaveData 
+
+
+  const handleSaveData = () => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        `
+        INSERT INTO Properties
+        (
+          propertyName,
+          descripition,
+          BuildupArea,
+          sqft,
+          AgeofProperty,
+          months,
+          monthlyRent,
+          BulilderName,
+          maintenaceCharges,
+          type,
+          propertytype,
+          owernertype,
+          possessionstatus,
+          bhk,
+          bathroom,
+          furnishedtype,
+          carparking,
+          twowheelerparking,
+          faceing,
+          securitydeposit,
+          overlooking,
+          flooring,
+          lifts
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `,
+        [
+          createProperty.propertyName,
+          createProperty.descripition,
+          createProperty.BuildupArea,
+          createProperty.sqft,
+          createProperty.AgeofProperty,
+          createProperty.months,
+          createProperty.monthlyRent,
+          createProperty.BulilderName,
+          createProperty.maintenaceCharges,
+          createProperty.type,
+          createProperty.propertytype,
+          createProperty.owernertype,
+          createProperty.possessionstatus,
+          createProperty.bhk,
+          createProperty.bathroom,
+          createProperty.furnishedtype,
+          createProperty.carparking,
+          createProperty.twowheelerparking,
+          createProperty.faceing,
+          createProperty.securitydeposit,
+          createProperty.overlooking,
+          createProperty.flooring,
+          createProperty.lifts
+        ],
+        (_, result) => {
+          console.log('Data saved successfully');
+          navigation.goBack();
+        },
+        (_, error) => {
+          console.error('Error saving data:', error);
+        }
+      );
+    });
+  };
+
+
+
+  const handleUpdateData = () => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        `
+      UPDATE Properties
+      SET
+        propertyName = ?,
+        descripition = ?,
+        BuildupArea = ?,
+        sqft = ?,
+        AgeofProperty = ?,
+        months = ?,
+        monthlyRent = ?,
+        BulilderName = ?,
+        maintenaceCharges = ?,
+        type = ?,
+        propertytype = ?,
+        owernertype = ?,
+        possessionstatus = ?,
+        bhk = ?,
+        bathroom = ?,
+        furnishedtype = ?,
+        carparking = ?,
+        twowheelerparking = ?,
+        faceing = ?,
+        securitydeposit = ?,
+        overlooking = ?,
+        flooring = ?,
+        lifts = ?
+      WHERE id = ?
+      `,
+        [
+          createProperty.propertyName,
+          createProperty.descripition,
+          createProperty.BuildupArea,
+          createProperty.sqft,
+          createProperty.AgeofProperty,
+          createProperty.months,
+          createProperty.monthlyRent,
+          createProperty.BulilderName,
+          createProperty.maintenaceCharges,
+          createProperty.type,
+          createProperty.propertytype,
+          createProperty.owernertype,
+          createProperty.possessionstatus,
+          createProperty.bhk,
+          createProperty.bathroom,
+          createProperty.furnishedtype,
+          createProperty.carparking,
+          createProperty.twowheelerparking,
+          createProperty.faceing,
+          createProperty.securitydeposit,
+          createProperty.overlooking,
+          createProperty.flooring,
+          createProperty.lifts,
+          propertyDatas.id, // ID to identify the record to update
+        ],
+        (_, result) => {
+
+          navigation.goBack();
+          // You may want to navigate to another screen or perform other actions
+        },
+        (_, error) => {
+          console.error('Error updating data:', error);
+        }
+      );
+    });
+  };
 
   return (
     <View style={styles.mainContainer}>
       <Header
         containerStyle={styles.headerContainer}
         statusBarProps={{ backgroundColor: 'transparent' }}
-        centerComponent={{ text: 'ADD Property', style: styles.heading }}
-      // rightComponent={
-      //   <View style={styles.headerRight}>
-      //     <TouchableOpacity style={styles.addIcon} onPress={() => {
-      //       console.log('asaishi')
-      //     }}>
-      //       <Ionicons name="add-sharp" size={24} color={colors.white} />
-      //     </TouchableOpacity>
-      //   </View>
-      // }
+        centerComponent={{ text: 'Create Property', style: styles.heading }}
+        leftComponent={
+          <View style={styles.headerleft}>
+            <TouchableOpacity style={styles.addIcon} onPress={() => {
+              navigation.goBack();
+            }}>
+              <Ionicons name="chevron-back" size={24} color={colors.white} />
+            </TouchableOpacity>
+          </View>
+        }
 
       />
       <ScrollView>
 
         <View style={styles.screenMargin}>
+
+          <View style={styles.note}>
+
+            <Text>Note :</Text>
+            <Text style={styles.noteText}>
+              * indicate a mandatory field
+            </Text>
+
+          </View>
           <View style={styles.smallgap}>
             <TextInput
               label="Property Name *"
@@ -178,6 +434,7 @@ const CreateProperty = () => {
               value={createProperty.descripition}
               style={styles.textinputColor}
               mode="flat"
+              multiline
             />
           </View>
 
@@ -227,6 +484,7 @@ const CreateProperty = () => {
                 value={createProperty.sqft}
                 style={styles.textinputColor}
                 mode="flat"
+                keyboardType="numeric"
               />
             </View>
 
@@ -240,15 +498,17 @@ const CreateProperty = () => {
                 value={createProperty.AgeofProperty}
                 style={styles.textinputColor}
                 mode="flat"
+              //keyboardType="numeric"
               />
             </View>
             <View style={{ flex: 0.8, paddingLeft: 15, }}>
               <TextInput
                 label="Month *"
                 onChangeText={(text) => setCreateProperty({ ...createProperty, months: text })}
-                value={createProperty.months}
+                value={createProperty.months.toString()}
                 style={styles.textinputColor}
                 mode="flat"
+                keyboardType="numeric"
               />
             </View>
           </View>
@@ -263,8 +523,8 @@ const CreateProperty = () => {
                     <SelectableChip
                       key={index}
                       label={item.name}
-                      isSelected={selectedChips.includes(item)}
-                      onPress={() => handleChipSelection(item)}
+                      isSelected={item.name === createProperty.type}
+                      onPress={() => handleChipSelection(item, 'type')}
 
                     />
                   </View>
@@ -282,8 +542,8 @@ const CreateProperty = () => {
                     <SelectableChip
                       key={index}
                       label={item.name}
-                      isSelected={selectedChips.includes(item)}
-                      onPress={() => handleChipSelection(item)}
+                      isSelected={item.name === createProperty.propertytype}
+                      onPress={() => handleChipSelection(item, 'propertyType')}
 
                     />
                   </View>
@@ -297,12 +557,12 @@ const CreateProperty = () => {
             <View style={{ flexDirection: 'row', padding: 10, flexWrap: 'wrap' }}>
               {owernerType.map((item, index) => {
                 return (
-                  <View key={index} style={{ flexWrap: 'wrap', }}>
+                  <View key={index}>
                     <SelectableChip
                       key={index}
                       label={item.name}
-                      isSelected={selectedChips.includes(item)}
-                      onPress={() => handleChipSelection(item)}
+                      isSelected={item.name === createProperty.owernertype}
+                      onPress={() => handleChipSelection(item, 'owernerType')}
 
                     />
                   </View>
@@ -320,8 +580,8 @@ const CreateProperty = () => {
                     <SelectableChip
                       key={index}
                       label={item.name}
-                      isSelected={selectedChips.includes(item)}
-                      onPress={() => handleChipSelection(item)}
+                      isSelected={item.name === createProperty.possessionstatus}
+                      onPress={() => handleChipSelection(item, 'possessionStatus')}
 
                     />
                   </View>
@@ -338,9 +598,9 @@ const CreateProperty = () => {
                   <View key={index} style={{ flexWrap: 'wrap', }}>
                     <SelectableChip
                       key={index}
-                      label={item.name}
-                      isSelected={selectedChips.includes(item)}
-                      onPress={() => handleChipSelection(item)}
+                      label={item.name.toString()}
+                      isSelected={item.name === createProperty.bhk}
+                      onPress={() => handleChipSelection(item, 'bhk')}
 
                     />
                   </View>
@@ -357,9 +617,9 @@ const CreateProperty = () => {
                   <View key={index} style={{ flexWrap: 'wrap', }}>
                     <SelectableChip
                       key={index}
-                      label={item.name}
-                      isSelected={selectedChips.includes(item)}
-                      onPress={() => handleChipSelection(item)}
+                      label={item.name.toString()}
+                      isSelected={item.name === createProperty.bathroom}
+                      onPress={() => handleChipSelection(item, 'bathroom')}
 
                     />
                   </View>
@@ -377,8 +637,8 @@ const CreateProperty = () => {
                     <SelectableChip
                       key={index}
                       label={item.name}
-                      isSelected={selectedChips.includes(item)}
-                      onPress={() => handleChipSelection(item)}
+                      isSelected={item.name === createProperty.furnishedtype}
+                      onPress={() => handleChipSelection(item, 'furnishedtype')}
 
                     />
                   </View>
@@ -396,8 +656,8 @@ const CreateProperty = () => {
                     <SelectableChip
                       key={index}
                       label={item.name}
-                      isSelected={selectedChips.includes(item)}
-                      onPress={() => handleChipSelection(item)}
+                      isSelected={item.name === createProperty.carparking}
+                      onPress={() => handleChipSelection(item, 'carparking')}
 
                     />
                   </View>
@@ -415,8 +675,8 @@ const CreateProperty = () => {
                     <SelectableChip
                       key={index}
                       label={item.name}
-                      isSelected={selectedChips.includes(item)}
-                      onPress={() => handleChipSelection(item)}
+                      isSelected={item.name === createProperty.twowheelerparking}
+                      onPress={() => handleChipSelection(item, 'twowheelerparking')}
 
                     />
                   </View>
@@ -425,7 +685,7 @@ const CreateProperty = () => {
             </View>
           </View>
           <View style={styles.smallgap}>
-            <Text style={styles.titleText}>Faceing</Text>
+            <Text style={styles.titleText}>Faceing  <Text style={styles.star}>*</Text></Text>
             <View style={styles.chipStyle}>
               {Faceing.map((item, index) => {
                 return (
@@ -433,8 +693,8 @@ const CreateProperty = () => {
                     <SelectableChip
                       key={index}
                       label={item.name}
-                      isSelected={selectedChips.includes(item)}
-                      onPress={() => handleChipSelection(item)}
+                      isSelected={item.name === createProperty.faceing}
+                      onPress={() => handleChipSelection(item, 'facing')}
 
                     />
                   </View>
@@ -452,8 +712,8 @@ const CreateProperty = () => {
                     <SelectableChip
                       key={index}
                       label={item.name}
-                      isSelected={selectedChips.includes(item)}
-                      onPress={() => handleChipSelection(item)}
+                      isSelected={item.name === createProperty.securitydeposit}
+                      onPress={() => handleChipSelection(item, 'securitydeposit')}
 
                     />
                   </View>
@@ -471,8 +731,8 @@ const CreateProperty = () => {
                     <SelectableChip
                       key={index}
                       label={item.name}
-                      isSelected={selectedChips.includes(item)}
-                      onPress={() => handleChipSelection(item)}
+                      isSelected={item.name === createProperty.overlooking}
+                      onPress={() => handleChipSelection(item, 'overlooking')}
 
                     />
                   </View>
@@ -491,8 +751,8 @@ const CreateProperty = () => {
                     <SelectableChip
                       key={index}
                       label={item.name}
-                      isSelected={selectedChips.includes(item)}
-                      onPress={() => handleChipSelection(item)}
+                      isSelected={item.name === createProperty.flooring}
+                      onPress={() => handleChipSelection(item, 'flooring')}
 
                     />
                   </View>
@@ -511,8 +771,8 @@ const CreateProperty = () => {
                     <SelectableChip
                       key={index}
                       label={item.name}
-                      isSelected={selectedChips.includes(item)}
-                      onPress={() => handleChipSelection(item)}
+                      isSelected={item.name === createProperty.lifts}
+                      onPress={() => handleChipSelection(item, 'lifts')}
 
                     />
                   </View>
@@ -525,8 +785,19 @@ const CreateProperty = () => {
 
         </View>
       </ScrollView>
-      <TouchableOpacity style={styles.buttonContainer}>
-        <Text style={styles.buttonText}>Create</Text>
+      <TouchableOpacity style={[styles.buttonContainer, { backgroundColor: isValid ? colors.primaryColor : colors.grayColor }]}
+        onPress={() => {
+          if (isValid) {
+            if (propertyDatas != null) {
+              handleUpdateData()
+            } else {
+              handleSaveData()
+            }
+          }
+
+        }}
+      >
+        <Text style={styles.buttonText}>{propertyDatas != null ? "Update" : 'Create'}</Text>
       </TouchableOpacity>
 
 
@@ -564,7 +835,8 @@ const styles = StyleSheet.create({
   },
 
   textinputColor: {
-    color: 'white'
+    color: colors.white,
+    fontSize: 18
   },
   headerContainer: {
     justifyContent: 'center',
@@ -575,12 +847,16 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
   },
   heading: {
-    color: 'white',
+    color: colors.white,
     fontSize: 22,
     fontWeight: 'bold',
+    paddingTop: 5
+  },
+  headerleft: {
+    paddingTop: 0
   },
   textcolorsBtn: {
-    color: 'white',
+    color: colors.white,
     fontSize: 18,
     fontWeight: 'bold',
 
@@ -614,6 +890,9 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: 16, fontWeight: 'bold'
   },
+  noteText: {
+    fontSize: 16,
+  },
   star: {
     color: colors.errorColor
   },
@@ -621,7 +900,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', padding: 10, flexWrap: 'wrap'
   },
   buttonContainer: {
-    backgroundColor:colors.primaryColor,
+
     alignItems: 'center',
     justifyContent: 'center',
     height: DimensionUtils(60),
@@ -629,8 +908,11 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontSize: 20,
-    fontWeight:'bold'
+    fontWeight: 'bold'
   },
+  note: {
+    backgroundColor: colors.grayColor, padding: 10
+  }
 
 });
 export default CreateProperty;

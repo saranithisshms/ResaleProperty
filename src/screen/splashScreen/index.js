@@ -19,7 +19,11 @@ const SplashScreen = () => {
   // Move the navigation logic inside the useEffect, which runs after the timeout
   useEffect(() => {
     if (!isVisible) {
-      navigation.navigate('ListingProperty');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'ListingProperty' }]
+      });
+      
     }
   }, [isVisible, navigation]);
 

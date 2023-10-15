@@ -2,8 +2,9 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Platform, Image,Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import your icon library of choice
 import { DimensionUtils } from "../styles/dimension";
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const PropertyCard = ({ name, onEditPress, onDeletePress }) => {
+const PropertyCard = ({ name,descripition, onEditPress, onDeletePress }) => {
   return (
     <View
       style={[
@@ -21,9 +22,9 @@ const PropertyCard = ({ name, onEditPress, onDeletePress }) => {
               style={styles.image}
             />
             <View style={styles.title}>
-              <Text  numberOfLines={2} style={styles.text}>{name} sasasasasasaaasadsdsasasa</Text>
+              <Text  numberOfLines={2} style={styles.text}>{name}</Text>
               <View>
-                <Text numberOfLines={2} style={styles.desText}>{'asashasohashauishauishaishiaugsiuagsigas'}</Text>
+                <Text numberOfLines={2} style={styles.desText}>{descripition}</Text>
               </View>
             </View>
           </View>
@@ -31,7 +32,7 @@ const PropertyCard = ({ name, onEditPress, onDeletePress }) => {
         <View style={{ flex: 1, alignItems: 'flex-end' }}>
           <View style={styles.row}>
             <TouchableOpacity onPress={() => onEditPress()}>
-              <Icon name="edit" size={28} color="blue" style={styles.icon} />
+              <MaterialCommunityIcons name="note-text" size={28} color="blue" style={styles.icon} />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => {
               Alert.alert(
