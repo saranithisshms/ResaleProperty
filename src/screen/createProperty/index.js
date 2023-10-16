@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, LogBox, ScrollView, Alert } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, LogBox, ScrollView, Alert,Image,Button } from 'react-native';
 
 import colors from '../../styles/colors';
 import { Header, HeaderProps, } from '@rneui/themed';
@@ -11,7 +11,7 @@ import { DimensionUtils } from '../../styles/dimension';
 import SQLite from 'react-native-sqlite-storage';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
 // import Toast from 'react-native-simple-toast';
 
@@ -60,11 +60,35 @@ const CreateProperty = () => {
     securitydeposit: '',
     overlooking: '',
     flooring: '',
-    lifts: ''
+    lifts: '',
+    image: ''
 
 
   });
 
+  const handleImagePicker = () => {
+    ImagePicker.launchImageLibrary(
+      {
+        title: 'Select Image',
+        storageOptions: {
+          skipBackup: true,
+          path: 'images',
+        },
+      },
+      (response) => {
+        if (response.didCancel) {
+          console.log('User cancelled image picker');
+        } else if (response.error) {
+          console.log('ImagePicker Error: ', response.error);
+        } else {
+          const source = { uri: response.uri };
+          setCreateProperty({ ...createProperty, image: source });
+
+          // You can now upload the image to your server or process it further.
+        }
+      }
+    );
+  };
 
 
   const onEditPress = (id) => {
@@ -427,7 +451,28 @@ const CreateProperty = () => {
               mode="flat"
             />
           </View>
+
           <View style={styles.smallgap}>
+
+            <Text style={styles.titleText}>I want to  <Text style={styles.star}>*</Text></Text>
+            <View style={{ flexDirection: 'row', paddingTop: 10, paddingLeft: 5 }}>
+              {type.map((item, index) => {
+                return (
+                  <View key={index} style={{ flexWrap: 'wrap', }}>
+                    <SelectableChip
+                      key={index}
+                      label={item.name}
+                      isSelected={item.name === createProperty.type}
+                      onPress={() => handleChipSelection(item, 'type')}
+
+                    />
+                  </View>
+                );
+              })}
+            </View>
+          </View>
+
+          <View style={[styles.smallgap,]}>
             <TextInput
               label="Descripition"
               onChangeText={(text) => setCreateProperty({ ...createProperty, descripition: text })}
@@ -440,7 +485,7 @@ const CreateProperty = () => {
 
           <View style={styles.smallgap}>
             <TextInput
-              label="Maintenace Charges"
+              label={"Maintenace Charges"}
               onChangeText={(text) => setCreateProperty({ ...createProperty, maintenaceCharges: text })}
               value={createProperty.maintenaceCharges}
               style={styles.textinputColor}
@@ -450,7 +495,7 @@ const CreateProperty = () => {
 
           <View style={styles.smallgap}>
             <TextInput
-              label="Monthly Rent"
+              label={createProperty.type == "sell" ? "Price" : "Monthly Rent"}
               onChangeText={(text) => setCreateProperty({ ...createProperty, monthlyRent: text })}
               value={createProperty.monthlyRent}
               style={styles.textinputColor}
@@ -513,25 +558,7 @@ const CreateProperty = () => {
             </View>
           </View>
 
-          <View style={styles.smallgap}>
 
-            <Text style={styles.titleText}>I want to  <Text style={styles.star}>*</Text></Text>
-            <View style={{ flexDirection: 'row', padding: 10 }}>
-              {type.map((item, index) => {
-                return (
-                  <View key={index} style={{ flexWrap: 'wrap', }}>
-                    <SelectableChip
-                      key={index}
-                      label={item.name}
-                      isSelected={item.name === createProperty.type}
-                      onPress={() => handleChipSelection(item, 'type')}
-
-                    />
-                  </View>
-                );
-              })}
-            </View>
-          </View>
           <View style={styles.smallgap}>
 
             <Text style={styles.titleText}>Property Type  <Text style={styles.star}>*</Text> </Text>
@@ -781,7 +808,10 @@ const CreateProperty = () => {
             </View>
           </View>
 
-
+          {/* <View>
+            {createProperty.image && <Image source={createProperty.image} style={{ width: 200, height: 200 }} />}
+            <Button title="Pick Image" onPress={handleImagePicker} />
+          </View> */}
 
         </View>
       </ScrollView>
@@ -853,7 +883,7 @@ const styles = StyleSheet.create({
     paddingTop: 5
   },
   headerleft: {
-    paddingTop: 0
+    paddingTop: 8
   },
   textcolorsBtn: {
     color: colors.white,

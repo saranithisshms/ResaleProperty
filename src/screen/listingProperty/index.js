@@ -74,9 +74,11 @@ const PropertyListing = () => {
 
 
   const onEditPress = (item) => {
+  
+    //console.log(item)
+   /// navigation.navigate('CreateProperty', { propertyDatas: item });
 
-    console.log(item)
-    navigation.navigate('CreateProperty', { propertyDatas: item });
+    navigation.navigate('ViewProperty', { propertyDatas: item });
 
   }
 
@@ -148,7 +150,7 @@ const PropertyListing = () => {
             </> :
 
             <View>
-              <Text>No Property So Far Not Add</Text>
+              <Text>No Property So far Not Add</Text>
             </View>}
 
         </View>

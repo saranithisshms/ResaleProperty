@@ -8,7 +8,8 @@ export const colors = {
     disableColor: '#808080',
   
     errorColor: '#FE0101',
-    grayColor:'#d3d3d3'
+    grayColor:'#d3d3d3',
+    darkgrayColor:'#7393B3'
    
 };
 
