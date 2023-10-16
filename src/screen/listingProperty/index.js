@@ -9,6 +9,8 @@ import { useFocusEffect } from '@react-navigation/native';
 
 import SQLite from 'react-native-sqlite-storage';
 import { ScrollView } from 'react-native-gesture-handler';
+import Toast from 'react-native-simple-toast';
+import { DimensionUtils } from '../../styles/dimension';
 
 
 
@@ -97,6 +99,7 @@ const PropertyListing = () => {
         [id],
         (_, result) => {
           console.log('Property deleted successfully');
+          Toast.show('Property deleted successfully', Toast.SHORT);
           getPropertyData()
           // You may want to update the propertyData state after deleting
           // For example, refetch and update the list of properties
@@ -149,8 +152,8 @@ const PropertyListing = () => {
               }
             </> :
 
-            <View>
-              <Text>No Property So far Not Add</Text>
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyText}>No property so far not Add</Text>
             </View>}
 
         </View>
@@ -232,6 +235,12 @@ const styles = StyleSheet.create({
   },
   addIcon: {
     marginLeft: 10, paddingTop: 10
+  },
+  emptyState:{
+    flex:1,justifyContent:'center',alignItems:'center',paddingTop:10 
+  },
+  emptyText:{
+    fontWeight:'bold',fontSize:20
   }
 });
 export default PropertyListing;

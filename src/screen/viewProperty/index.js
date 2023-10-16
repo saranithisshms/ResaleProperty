@@ -7,6 +7,7 @@ import { NavigationProp, useNavigation, useRoute } from '@react-navigation/nativ
 import { DimensionUtils } from "../../styles/dimension";
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 
 
 // import Toast from 'react-native-simple-toast';
@@ -15,15 +16,19 @@ const ViewProperty = () => {
 
 
   const route = useRoute();
-  const [propertyData, setPropertyData] = useState([]);
+  const [propertyData, setPropertyData] = useState('');
 
 
   const navigation = useNavigation();
 
+  const propertyDatas = route.params?.propertyDatas ?? null;
 
   useEffect(() => {
     LogBox.ignoreLogs(['Warning message']);
 
+    if (propertyDatas != null && propertyDatas != undefined) {
+      setPropertyData(propertyDatas)
+    }
   }, []);
 
 
@@ -49,6 +54,17 @@ const ViewProperty = () => {
             </TouchableOpacity>
           </View>
         }
+        rightComponent={
+          <View style={styles.headerright}>
+            <TouchableOpacity style={styles.addIcon} onPress={() => {
+            navigation.navigate('CreateProperty', { propertyDatas: propertyDatas });
+            }}>
+              <AntDesign name="edit" size={24} color={colors.white} />
+            </TouchableOpacity>
+          </View>
+        }
+
+
 
       />
       <ScrollView >
@@ -63,20 +79,22 @@ const ViewProperty = () => {
           <View style={styles.subCont}>
 
             <View>
-              <Text style={styles.title}>2BHK Aparment For Sale</Text>
+              <Text style={styles.title}>{propertyData.propertyName}</Text>
             </View>
             <Text style={styles.normalText}>Address</Text>
 
             <View>
-              <Text style={styles.normalText}>Area {'5000'} sq.ft  </Text>
+              <Text style={styles.normalText}>Area {propertyData.sqft} sq.ft  </Text>
             </View>
             <View>
-              <Text style={styles.pricetext}>50K </Text>
+              <Text style={styles.pricetext}>{propertyData.monthlyRent} </Text>
             </View>
 
             <View>
-              <Text style={styles.title}>OverView</Text>
+              <Text style={{ fontWeight: 'bold', fontSize: 19, color: colors.black }}>OverView</Text>
             </View>
+
+
             <View style={{ flexDirection: 'row', paddingTop: 5 }}>
               <View style={{ flex: 1 }}>
                 <View style={styles.gap}>
@@ -84,7 +102,7 @@ const ViewProperty = () => {
                     Built Area
                   </Text>
                   <Text style={styles.overText}>
-                    {'5000'} sq.ft.
+                    {propertyData.sqft} sq.ft.
                   </Text>
                 </View>
                 <View style={styles.gap}>
@@ -92,7 +110,7 @@ const ViewProperty = () => {
                     BHK
                   </Text>
                   <Text style={styles.overText}>
-                    2 BHK
+                    {propertyData.bhk}
                   </Text>
                 </View>
                 <View style={styles.gap}>
@@ -100,7 +118,7 @@ const ViewProperty = () => {
                     Car parking
                   </Text>
                   <Text style={styles.overText}>
-                    2
+                    {propertyData.carparking}
                   </Text>
                 </View>
                 <View style={styles.gap}>
@@ -108,7 +126,7 @@ const ViewProperty = () => {
                     Two wheeler parking
                   </Text>
                   <Text style={styles.overText}>
-                    2
+                    {propertyData.twowheelerparking}
                   </Text>
                 </View>
                 <View style={styles.gap}>
@@ -116,42 +134,44 @@ const ViewProperty = () => {
                     LandLord
                   </Text>
                   <Text style={styles.overText}>
-                    Sara
+                    {propertyData.BulilderName}
                   </Text>
                 </View>
                 <View style={styles.gap}>
                   <Text style={styles.subtitle}>
-                     MobileNumber
+                    MobileNumber
                   </Text>
                   <Text style={styles.overText}>
-                     123456789
+                    123456789
                   </Text>
                 </View>
 
               </View>
               <View style={{ flex: 0.8, paddingLeft: 15, }}>
-                <View style={styles.gap}>
-                  <Text style={styles.subtitle}>
-                    Possession Status
-                  </Text>
-                  <Text style={styles.overText}>
-                    {'5000'} sq.ft.
-                  </Text>
-                </View>
-                <View style={styles.gap}>
-                  <Text style={styles.subtitle}>
-                    Flooring
-                  </Text>
-                  <Text style={styles.overText}>
-                    wooden Flooring
-                  </Text>
-                </View>
+                {propertyDatas.possessionstatus &&
+                  <View style={styles.gap}>
+                    <Text style={styles.subtitle}>
+                      Possession Status
+                    </Text>
+                    <Text style={styles.overText}>
+                      {propertyData.possessionstatus}
+                    </Text>
+                  </View>}
+                {propertyData.flooring &&
+                  <View style={styles.gap}>
+                    <Text style={styles.subtitle}>
+                      Flooring
+                    </Text>
+                    <Text style={styles.overText}>
+                      {propertyData.flooring}
+                    </Text>
+                  </View>}
                 <View style={styles.gap}>
                   <Text style={styles.subtitle}>
                     Bathroom
                   </Text>
                   <Text style={styles.overText}>
-                    wooden Flooring
+                    {propertyData.bathroom}
                   </Text>
                 </View>
                 <View style={styles.gap}>
@@ -159,17 +179,27 @@ const ViewProperty = () => {
                     Faceing
                   </Text>
                   <Text style={styles.overText}>
-                    North
+                    {propertyData.faceing}
                   </Text>
                 </View>
-                <View style={styles.gap}>
-                  <Text style={styles.subtitle}>
-                    Overlooking
-                  </Text>
-                  <Text style={styles.overText}>
-                    Graden /parking
-                  </Text>
-                </View>
+                {propertyData.overlooking &&
+                  <View style={styles.gap}>
+                    <Text style={styles.subtitle}>
+                      Overlooking
+                    </Text>
+                    <Text style={styles.overText}>
+                      {propertyData.overlooking}
+                    </Text>
+                  </View>}
+                {propertyData.securitydeposit &&
+                  <View style={styles.gap}>
+                    <Text style={styles.subtitle}>
+                      Security Deposit
+                    </Text>
+                    <Text style={styles.overText}>
+                      {propertyData.securitydeposit}
+                    </Text>
+                  </View>}
               </View>
             </View>
 
@@ -183,7 +213,7 @@ const ViewProperty = () => {
                     Area
                   </Text>
                   <Text style={styles.overText}>
-                    {'5000'} sq.ft.
+                    {propertyData.sqft} sq.ft.
                   </Text>
                 </View>
                 <View style={styles.gap}>
@@ -191,7 +221,7 @@ const ViewProperty = () => {
                     BHK
                   </Text>
                   <Text style={styles.overText}>
-                    2 BHK
+                    {propertyData.bhk}
                   </Text>
                 </View>
               </View>
@@ -201,14 +231,11 @@ const ViewProperty = () => {
                     Amount
                   </Text>
                   <Text style={styles.overText}>
-                    {'5000'} sq.ft.
+                    {propertyData.monthlyRent} sq.ft.
                   </Text>
                 </View>
               </View>
             </View>
-
-
-
           </View>
         </View>
       </ScrollView>
@@ -235,6 +262,9 @@ const styles = StyleSheet.create({
     paddingTop: 5
   },
   headerleft: {
+    paddingTop: 8
+  },
+  headerright: {
     paddingTop: 8
   },
   image: {

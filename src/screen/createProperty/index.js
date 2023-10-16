@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, LogBox, ScrollView, Alert,Image,Button } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, LogBox, ScrollView, Alert, Image, Button } from 'react-native';
 
 import colors from '../../styles/colors';
 import { Header, HeaderProps, } from '@rneui/themed';
@@ -11,7 +11,8 @@ import { DimensionUtils } from '../../styles/dimension';
 import SQLite from 'react-native-sqlite-storage';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import Entypo  from 'react-native-vector-icons/Entypo';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
 // import Toast from 'react-native-simple-toast';
 
@@ -61,39 +62,35 @@ const CreateProperty = () => {
     overlooking: '',
     flooring: '',
     lifts: '',
-    image: ''
+    image: null,
+    propertyaddress:''
 
 
   });
 
-  const handleImagePicker = () => {
-    ImagePicker.launchImageLibrary(
-      {
-        title: 'Select Image',
-        storageOptions: {
-          skipBackup: true,
-          path: 'images',
-        },
-      },
-      (response) => {
-        if (response.didCancel) {
-          console.log('User cancelled image picker');
-        } else if (response.error) {
-          console.log('ImagePicker Error: ', response.error);
-        } else {
-          const source = { uri: response.uri };
-          setCreateProperty({ ...createProperty, image: source });
+  const [image, setImage] = useState({})
 
-          // You can now upload the image to your server or process it further.
-        }
+  const handleImagePicker = () => {
+
+
+    let option = {
+      storageOption: {
+        path: 'image',
       }
-    );
+    }
+
+    launchImageLibrary(option, response => {
+
+      setCreateProperty({ ...createProperty, image: response.assets[0].uri })
+
+      console.log(createProperty.image, response)
+    })
+
+
   };
 
 
-  const onEditPress = (id) => {
-
-  }
+ 
 
   const propertyDatas = route.params?.propertyDatas ?? null;
 
@@ -109,7 +106,7 @@ const CreateProperty = () => {
 
 
   const editData = (propertyDatas) => {
-
+     console.log(propertyDatas.monthlyRent,propertyDatas.maintenaceCharge)
     setCreateProperty({
       ...createProperty,
 
@@ -139,7 +136,7 @@ const CreateProperty = () => {
 
     })
 
-
+    console.log("setData",createProperty.monthlyRent)
   }
 
 
@@ -262,7 +259,8 @@ const CreateProperty = () => {
       createProperty.owernertype !== '' &&
       createProperty.bhk !== '' &&
       createProperty.bathroom !== '' &&
-      createProperty.faceing !== ''
+      createProperty.faceing !== '' &&
+      createProperty.monthlyRent !== ''
     ) {
       return true;
     } else {
@@ -333,6 +331,8 @@ const CreateProperty = () => {
         ],
         (_, result) => {
           console.log('Data saved successfully');
+         
+          
           navigation.goBack();
         },
         (_, error) => {
@@ -402,8 +402,8 @@ const CreateProperty = () => {
           propertyDatas.id, // ID to identify the record to update
         ],
         (_, result) => {
-
-          navigation.goBack();
+          navigation.navigate('ListingProperty');
+         
           // You may want to navigate to another screen or perform other actions
         },
         (_, error) => {
@@ -451,7 +451,15 @@ const CreateProperty = () => {
               mode="flat"
             />
           </View>
-
+          <View style={styles.smallgap}>
+            <TextInput
+              label="Address *"
+              onChangeText={(text) => setCreateProperty({ ...createProperty, propertyaddress: text })}
+              value={createProperty.propertyaddress}
+              style={styles.textinputColor}
+              mode="flat"
+            />
+          </View>
           <View style={styles.smallgap}>
 
             <Text style={styles.titleText}>I want to  <Text style={styles.star}>*</Text></Text>
@@ -487,20 +495,24 @@ const CreateProperty = () => {
             <TextInput
               label={"Maintenace Charges"}
               onChangeText={(text) => setCreateProperty({ ...createProperty, maintenaceCharges: text })}
-              value={createProperty.maintenaceCharges}
+              value={createProperty.maintenaceCharges ? createProperty.maintenaceCharges.toString() :createProperty.maintenaceCharges}
               style={styles.textinputColor}
               mode="flat"
+              keyboardType="numeric"
             />
           </View>
 
           <View style={styles.smallgap}>
             <TextInput
-              label={createProperty.type == "sell" ? "Price" : "Monthly Rent"}
+              label={createProperty.type == "sell" ? "Price *" : "Monthly Rent *"}
               onChangeText={(text) => setCreateProperty({ ...createProperty, monthlyRent: text })}
-              value={createProperty.monthlyRent}
+              value={createProperty.monthlyRent.toString()}
               style={styles.textinputColor}
               mode="flat"
+              keyboardType="numeric"
             />
+
+
           </View>
 
           <View style={styles.smallgap}>
@@ -558,6 +570,38 @@ const CreateProperty = () => {
             </View>
           </View>
 
+          <View style={styles.smallgap}>
+            <Text style={styles.titleText}>Add Property Image </Text>
+          </View>
+          <View style={styles.smallgap}>
+
+            {createProperty.image != null ?
+
+              <View style={{ paddingRight:10,paddingLeft:10 }}>
+                <Image source={{ uri: createProperty.image }} style={styles.uploadImage} />
+                <View style={styles.deleteIcon}>
+                  <TouchableOpacity
+                    onPress={() =>   setCreateProperty({ ...createProperty, image: null })}>
+                    <View style={styles.removeCricle}>
+                      <Entypo
+                        name={'circle-with-cross'}
+                        size={24}
+                        color={colors.errorColor}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              </View>
+              : <TouchableOpacity
+                style={styles.borderbutton}
+                onPress={handleImagePicker}
+              >
+                <Text style={styles.buttonText}>upload Image +</Text>
+              </TouchableOpacity>}
+
+          </View>
+
+
 
           <View style={styles.smallgap}>
 
@@ -578,8 +622,8 @@ const CreateProperty = () => {
               })}
             </View>
           </View>
-          <View style={styles.smallgap}>
 
+          <View style={styles.smallgap}>
             <Text style={styles.titleText}>Owerner Type  <Text style={styles.star}>*</Text> </Text>
             <View style={{ flexDirection: 'row', padding: 10, flexWrap: 'wrap' }}>
               {owernerType.map((item, index) => {
@@ -808,10 +852,7 @@ const CreateProperty = () => {
             </View>
           </View>
 
-          {/* <View>
-            {createProperty.image && <Image source={createProperty.image} style={{ width: 200, height: 200 }} />}
-            <Button title="Pick Image" onPress={handleImagePicker} />
-          </View> */}
+         
 
         </View>
       </ScrollView>
@@ -827,7 +868,7 @@ const CreateProperty = () => {
 
         }}
       >
-        <Text style={styles.buttonText}>{propertyDatas != null ? "Update" : 'Create'}</Text>
+        <Text style={styles.buttonTexts}>{propertyDatas != null ? "Update" : 'Create'}</Text>
       </TouchableOpacity>
 
 
@@ -935,14 +976,42 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: DimensionUtils(60),
   },
-  buttonText: {
+  buttonTexts: {
     color: 'white',
     fontSize: 20,
     fontWeight: 'bold'
   },
   note: {
     backgroundColor: colors.grayColor, padding: 10
-  }
+  },
+  borderbutton: {
+    borderWidth: 1,
+    borderColor: colors.darkgrayColor,
+    borderRadius: 5,
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderStyle: 'dotted'
+  },
+  buttonText: {
+    fontSize: 16,
+    color: colors.darkgrayColor,
+  },
+  uploadImage: {
+    width: '100%',
+    height: DimensionUtils(200),
+    borderRadius: 10
+  },
+  deleteIcon: {
+    width: 25,
+    height: 25,
+     right: -6,
+     top: -6,
+    zIndex: 1,
+  
+    position: 'absolute',
+
+  },
 
 });
 export default CreateProperty;
