@@ -418,7 +418,7 @@ const CreateProperty = () => {
       <Header
         containerStyle={styles.headerContainer}
         statusBarProps={{ backgroundColor: 'transparent' }}
-        centerComponent={{ text: 'Create Property', style: styles.heading }}
+        centerComponent={{ text:'Property' , style: styles.heading }}
         leftComponent={
           <View style={styles.headerleft}>
             <TouchableOpacity style={styles.addIcon} onPress={() => {
@@ -491,16 +491,16 @@ const CreateProperty = () => {
             />
           </View>
 
-          <View style={styles.smallgap}>
+          {/* <View style={styles.smallgap}>
             <TextInput
               label={"Maintenace Charges"}
               onChangeText={(text) => setCreateProperty({ ...createProperty, maintenaceCharges: text })}
-              value={createProperty.maintenaceCharges ? createProperty.maintenaceCharges.toString() :createProperty.maintenaceCharges}
+              value={createProperty?.maintenaceCharges?.toString()}
               style={styles.textinputColor}
               mode="flat"
               keyboardType="numeric"
             />
-          </View>
+          </View> */}
 
           <View style={styles.smallgap}>
             <TextInput
@@ -538,7 +538,7 @@ const CreateProperty = () => {
               <TextInput
                 label="Sq.ft *"
                 onChangeText={(text) => setCreateProperty({ ...createProperty, sqft: text })}
-                value={createProperty.sqft}
+                value={createProperty.sqft.toString()}
                 style={styles.textinputColor}
                 mode="flat"
                 keyboardType="numeric"
@@ -899,7 +899,8 @@ const styles = StyleSheet.create({
   },
   screenMargin: {
     paddingLeft: 10,
-    paddingRight: 10
+    paddingRight: 10,
+    paddingTop:14
   },
   smallgap: {
     paddingTop: 15
@@ -913,7 +914,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.primaryColor,
-    marginBottom: 20,
+   
     width: '100%',
     paddingVertical: 15,
   },
@@ -924,7 +925,7 @@ const styles = StyleSheet.create({
     paddingTop: 5
   },
   headerleft: {
-    paddingTop: 8
+    paddingTop: 0
   },
   textcolorsBtn: {
     color: colors.white,
@@ -949,7 +950,7 @@ const styles = StyleSheet.create({
 
   },
   mainContainer: {
-    width: '100%', height: '100%', backgroundColor: colors.white
+    width: '100%', height: '100%', backgroundColor: colors.white,
   },
   addIcon: {
     marginLeft: 10, paddingTop: 10
