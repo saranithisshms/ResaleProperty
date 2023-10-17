@@ -4,7 +4,7 @@ export const colors = {
     black: '#000',
    
 
-    primaryColor: '#FFA500',
+    primaryColor: '#000',
     disableColor: '#808080',
   
     errorColor: '#FE0101',
