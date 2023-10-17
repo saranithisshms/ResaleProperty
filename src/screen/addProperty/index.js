@@ -11,12 +11,12 @@ import { DimensionUtils } from '../../styles/dimension';
 import SQLite from 'react-native-sqlite-storage';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Entypo from 'react-native-vector-icons/Entypo';
+import Entypo  from 'react-native-vector-icons/Entypo';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import RNFS from 'react-native-fs';
+
 // import Toast from 'react-native-simple-toast';
 
-const AddProperty = () => {
+const CreateProperty = () => {
 
 
   const route = useRoute();
@@ -63,9 +63,10 @@ const AddProperty = () => {
     flooring: '',
     lifts: '',
     image: null,
-    propertyaddress: ''
+    propertyaddress:'',
+    mobilenumber:'',
 
-
+ 
   });
 
   const [image, setImage] = useState({})
@@ -81,32 +82,16 @@ const AddProperty = () => {
 
     launchImageLibrary(option, response => {
 
-      // setCreateProperty({ ...createProperty, image: response.assets[0].uri })
+      setCreateProperty({ ...createProperty, image: response.assets[0].uri })
 
-      // console.log(createProperty.image, response)
-
-      const imagePath = response.assets[0].uri;
-
-
-      RNFS.readFile(imagePath, 'base64')
-        .then((base64Image) => {
-
-          setCreateProperty({ ...createProperty, image: imagePath });
-
-
-        })
-        .catch((error) => {
-          console.error('Error reading the image file: ', error);
-        });
-
-
+      console.log(createProperty.image, response)
     })
 
 
   };
 
 
-
+ 
 
   const propertyDatas = route.params?.propertyDatas ?? null;
 
@@ -122,7 +107,7 @@ const AddProperty = () => {
 
 
   const editData = (propertyDatas) => {
-    console.log(propertyDatas.monthlyRent, propertyDatas.maintenaceCharge)
+     console.log(propertyDatas.monthlyRent,propertyDatas.maintenaceCharge)
     setCreateProperty({
       ...createProperty,
 
@@ -152,88 +137,46 @@ const AddProperty = () => {
 
     })
 
-    console.log("setData", createProperty.monthlyRent)
+    console.log("setData",createProperty.monthlyRent)
   }
 
 
   const createTable = () => {
-    // db.transaction((tx) => {
-    //   tx.executeSql(
-    //     `
-    //     CREATE TABLE IF NOT EXISTS Properties (
-    //       id INTEGER PRIMARY KEY AUTOINCREMENT,
-    //       propertyName TEXT,
-    //       descripition TEXT,
-    //       BuildupArea REAL,
-    //       sqft REAL,
-    //       AgeofProperty TEXT,
-    //       months INTEGER,
-    //       monthlyRent REAL,
-    //       BulilderName TEXT,
-    //       maintenaceCharges REAL,
-    //       type TEXT,
-    //       propertytype TEXT,
-    //       owernertype TEXT,
-    //       possessionstatus TEXT,
-    //       bhk INTEGER,
-    //       bathroom INTEGER,
-    //       furnishedtype TEXT,
-    //       carparking TEXT,
-    //       twowheelerparking TEXT,
-    //       faceing TEXT,
-    //       securitydeposit REAL,
-    //       overlooking TEXT,
-    //       flooring TEXT,
-    //       lifts TEXT,
-    //       image Text,  
-    //       address TEXT,
-    //     )
-    //     `,
-    //     [],
-    //     () => {
-    //        console.log('Table created successfully');
-    //     },
-    //     (_, error) => {
-    //       console.error('Error creating table:', error);
-    //     }
-    //   );
-    // });
     db.transaction((tx) => {
       tx.executeSql(
         `
-  CREATE TABLE IF NOT EXISTS Property (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    propertyName TEXT,
-    descripition TEXT,
-    imageUri TEXT,
-    address TEXT,
-    BuildupArea REAL, -- Use REAL for decimal values
-    sqft INTEGER,
-    AgeofProperty TEXT,
-    months INTEGER,
-    monthlyRent REAL, -- Use REAL for decimal values
-    BulilderName TEXT,
-    maintenaceCharges REAL, -- Use REAL for decimal values
-    type TEXT,
-    propertytype TEXT,
-    owernertype TEXT,
-    possessionstatus TEXT,
-    bhk INTEGER,
-    bathroom INTEGER,
-    furnishedtype TEXT,
-    carparking TEXT,
-    twowheelerparking TEXT,
-    faceing TEXT,
-    securitydeposit REAL,
-    overlooking TEXT,
-    flooring TEXT,
-    lifts TEXT
-  )
-  `,
+        CREATE TABLE IF NOT EXISTS Properties (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          propertyName TEXT,
+          descripition TEXT,
+          BuildupArea REAL,
+          sqft REAL,
+          AgeofProperty TEXT,
+          months INTEGER,
+          monthlyRent REAL,
+          BulilderName TEXT,
+          maintenaceCharges REAL,
+          type TEXT,
+          propertytype TEXT,
+          owernertype TEXT,
+          possessionstatus TEXT,
+          bhk INTEGER,
+          bathroom INTEGER,
+          furnishedtype TEXT,
+          carparking TEXT,
+          twowheelerparking TEXT,
+          faceing TEXT,
+          securitydeposit REAL,
+          overlooking TEXT,
+          flooring TEXT,
+          lifts TEXT,
+          address TEXT
+          
+        )
+        `,
         [],
         () => {
-          // Table created successfully
-          console.log('Table created successfully');
+            console.log('Table created successfully');
         },
         (_, error) => {
           console.error('Error creating table:', error);
@@ -333,93 +276,41 @@ const AddProperty = () => {
 
 
   const handleSaveData = () => {
-    // db.transaction((tx) => {
-    //   tx.executeSql(
-    //     `
-    //     INSERT INTO Properties
-    //     (
-    //       propertyName,
-    //       descripition,
-    //       BuildupArea,
-    //       sqft,
-    //       AgeofProperty,
-    //       months,
-    //       monthlyRent,
-    //       BulilderName,
-    //       maintenaceCharges,
-    //       type,
-    //       propertytype,
-    //       owernertype,
-    //       possessionstatus,
-    //       bhk,
-    //       bathroom,
-    //       furnishedtype,
-    //       carparking,
-    //       twowheelerparking,
-    //       faceing,
-    //       securitydeposit,
-    //       overlooking,
-    //       flooring,
-    //       lifts,
-    //       image,
-    //       address
-    //     )
-    //     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    //     `,
-    //     [
-    //       createProperty.propertyName,
-    //       createProperty.descripition,
-    //       createProperty.BuildupArea,
-    //       createProperty.sqft,
-    //       createProperty.AgeofProperty,
-    //       createProperty.months,
-    //       createProperty.monthlyRent,
-    //       createProperty.BulilderName,
-    //       createProperty.maintenaceCharges,
-    //       createProperty.type,
-    //       createProperty.propertytype,
-    //       createProperty.owernertype,
-    //       createProperty.possessionstatus,
-    //       createProperty.bhk,
-    //       createProperty.bathroom,
-    //       createProperty.furnishedtype,
-    //       createProperty.carparking,
-    //       createProperty.twowheelerparking,
-    //       createProperty.faceing,
-    //       createProperty.securitydeposit,
-    //       createProperty.overlooking,
-    //       createProperty.flooring,
-    //       createProperty.lifts,
-    //       createProperty.image,
-    //       createProperty.address
-    //     ],
-    //     (_, result) => {
-    //       console.log('Data saved successfully');
-
-
-    //       navigation.goBack();
-    //     },
-    //     (_, error) => {
-    //       console.error('Error saving data:', error);
-    //     }
-    //   );
-    // });
     db.transaction((tx) => {
       tx.executeSql(
         `
-          INSERT INTO Property (
-            propertyName, descripition, imageUri, address, BuildupArea, sqft,
-            AgeofProperty, months, monthlyRent, BulilderName, maintenaceCharges, type,
-            propertytype, owernertype, possessionstatus, bhk, bathroom, furnishedtype,
-            carparking, twowheelerparking, faceing, securitydeposit, overlooking, flooring, lifts
-          )
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        INSERT INTO Properties
+        (
+          propertyName,
+          descripition,
+          BuildupArea,
+          sqft,
+          AgeofProperty,
+          months,
+          monthlyRent,
+          BulilderName,
+          maintenaceCharges,
+          type,
+          propertytype,
+          owernertype,
+          possessionstatus,
+          bhk,
+          bathroom,
+          furnishedtype,
+          carparking,
+          twowheelerparking,
+          faceing,
+          securitydeposit,
+          overlooking,
+          flooring,
+          lifts,
+          address
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `,
         [
           createProperty.propertyName,
           createProperty.descripition,
-          createProperty.imageUri,
-          createProperty.address,
           createProperty.BuildupArea,
           createProperty.sqft,
           createProperty.AgeofProperty,
@@ -441,49 +332,19 @@ const AddProperty = () => {
           createProperty.overlooking,
           createProperty.flooring,
           createProperty.lifts,
+          createProperty.propertyaddress
         ],
         (_, result) => {
-          if (result) {
-            console.log('Data inserted successfully with ID: ' + result.insertId);
-          } else {
-            console.error('Error inserting data');
-          }
-          navigation.goBack();
+          console.log('Data saved successfully');
+         
+          console.log(result,createProperty.propertyaddress)
+          //navigation.goBack();
         },
-        (tx, error) => {
-          console.error(error);
-            
+        (_, error) => {
+          console.error('Error saving data:', error);
         }
-      )
-    });;
-
-    console.log(
-      createProperty.propertyName,
-      createProperty.descripition,
-      createProperty.BuildupArea,
-      createProperty.sqft,
-      createProperty.AgeofProperty,
-      createProperty.months,
-      createProperty.monthlyRent,
-      createProperty.BulilderName,
-      createProperty.maintenaceCharges,
-      createProperty.type,
-      createProperty.propertytype,
-      createProperty.owernertype,
-      createProperty.possessionstatus,
-      createProperty.bhk,
-      createProperty.bathroom,
-      createProperty.furnishedtype,
-      createProperty.carparking,
-      createProperty.twowheelerparking,
-      createProperty.faceing,
-      createProperty.securitydeposit,
-      createProperty.overlooking,
-      createProperty.flooring,
-      createProperty.lifts,
-      createProperty.image,
-      createProperty.propertyaddress
-    )
+      );
+    });
   };
 
 
@@ -547,7 +408,7 @@ const AddProperty = () => {
         ],
         (_, result) => {
           navigation.navigate('ListingProperty');
-
+         
           // You may want to navigate to another screen or perform other actions
         },
         (_, error) => {
@@ -562,7 +423,7 @@ const AddProperty = () => {
       <Header
         containerStyle={styles.headerContainer}
         statusBarProps={{ backgroundColor: 'transparent' }}
-        centerComponent={{ text: 'Property', style: styles.heading }}
+        centerComponent={{ text:'Property' , style: styles.heading }}
         leftComponent={
           <View style={styles.headerleft}>
             <TouchableOpacity style={styles.addIcon} onPress={() => {
@@ -721,11 +582,11 @@ const AddProperty = () => {
 
             {createProperty.image != null ?
 
-              <View style={{ paddingRight: 10, paddingLeft: 10 }}>
+              <View style={{ paddingRight:10,paddingLeft:10 }}>
                 <Image source={{ uri: createProperty.image }} style={styles.uploadImage} />
                 <View style={styles.deleteIcon}>
                   <TouchableOpacity
-                    onPress={() => setCreateProperty({ ...createProperty, image: null })}>
+                    onPress={() =>   setCreateProperty({ ...createProperty, image: null })}>
                     <View style={styles.removeCricle}>
                       <Entypo
                         name={'circle-with-cross'}
@@ -996,7 +857,7 @@ const AddProperty = () => {
             </View>
           </View>
 
-
+         
 
         </View>
       </ScrollView>
@@ -1044,7 +905,7 @@ const styles = StyleSheet.create({
   screenMargin: {
     paddingLeft: 10,
     paddingRight: 10,
-    paddingTop: 14
+    paddingTop:14
   },
   smallgap: {
     paddingTop: 15
@@ -1058,7 +919,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.primaryColor,
-
+   
     width: '100%',
     paddingVertical: 15,
   },
@@ -1150,13 +1011,13 @@ const styles = StyleSheet.create({
   deleteIcon: {
     width: 25,
     height: 25,
-    right: -6,
-    top: -6,
+     right: -6,
+     top: -6,
     zIndex: 1,
-
+  
     position: 'absolute',
 
   },
 
 });
-export default AddProperty;
+export default CreateProperty;

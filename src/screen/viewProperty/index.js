@@ -34,7 +34,7 @@ const ViewProperty = () => {
 
 
 
-
+  console.log(propertyData.address)
 
   // Define the saveValidation function
 
@@ -57,7 +57,7 @@ const ViewProperty = () => {
         rightComponent={
           <View style={styles.headerright}>
             <TouchableOpacity style={styles.addIcon} onPress={() => {
-            navigation.navigate('CreateProperty', { propertyDatas: propertyDatas });
+              navigation.navigate('CreateProperty', { propertyDatas: propertyDatas });
             }}>
               <AntDesign name="edit" size={24} color={colors.white} />
             </TouchableOpacity>
@@ -81,7 +81,8 @@ const ViewProperty = () => {
             <View>
               <Text style={styles.title}>{propertyData.propertyName}</Text>
             </View>
-            <Text style={styles.normalText}>Address</Text>
+            <Text style={styles.subtitle}>Address:</Text>
+            <Text  style={styles.normalText}>{propertyData.address} sdsdsdksdsojdsdpsjdpsdpsjdspidsidpjspdis</Text>
 
             <View>
               <Text style={styles.normalText}>Area {propertyData.sqft} sq.ft  </Text>
