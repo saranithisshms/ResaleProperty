@@ -27,7 +27,7 @@ const PropertyListing = () => {
   // Open the database
   const db = SQLite.openDatabase(
     {
-      name: 'propertyData.db',
+      name: 'propertyDatasImage.db',
       location: 'default',
     },
     () => {

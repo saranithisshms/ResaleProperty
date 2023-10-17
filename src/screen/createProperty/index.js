@@ -106,7 +106,7 @@ const CreateProperty = () => {
 
 
   const editData = (propertyDatas) => {
-     console.log(propertyDatas.monthlyRent,propertyDatas.maintenaceCharge)
+     console.log(propertyDatas.monthlyRent,propertyDatas.maintenaceCharge, propertyDatas.BuildupArea)
     setCreateProperty({
       ...createProperty,
 

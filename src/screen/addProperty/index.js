@@ -23,7 +23,7 @@ const CreateProperty = () => {
   const [propertyData, setPropertyData] = useState([]);
   const db = SQLite.openDatabase(
     {
-      name: 'propertyData.db',
+      name: 'propertyDatasImage.db',
       location: 'default',
     },
     () => {
@@ -84,7 +84,7 @@ const CreateProperty = () => {
 
       setCreateProperty({ ...createProperty, image: response.assets[0].uri })
 
-      console.log(createProperty.image, response)
+      console.log(createProperty.image, response.assets[0].uri)
     })
 
 
@@ -133,7 +133,10 @@ const CreateProperty = () => {
       securitydeposit: propertyDatas.securitydeposit,
       overlooking: propertyDatas.overlooking,
       flooring: propertyDatas.flooring,
-      lifts: propertyDatas.lifts
+      lifts: propertyDatas.lifts,
+      propertyaddress:propertyDatas.address,
+      mobilenumber:propertyDatas.phone,
+      image:propertyDatas.imageuri
 
     })
 
@@ -170,8 +173,10 @@ const CreateProperty = () => {
           overlooking TEXT,
           flooring TEXT,
           lifts TEXT,
-          address TEXT
-          
+          address TEXT,
+          phone TEXT,
+          imageuri TEXT
+
         )
         `,
         [],
@@ -304,9 +309,12 @@ const CreateProperty = () => {
           overlooking,
           flooring,
           lifts,
-          address
+          address,
+          phone,
+          imageuri
+          
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `,
         [
           createProperty.propertyName,
@@ -332,13 +340,16 @@ const CreateProperty = () => {
           createProperty.overlooking,
           createProperty.flooring,
           createProperty.lifts,
-          createProperty.propertyaddress
+          createProperty.propertyaddress,
+          createProperty.mobilenumber,
+          createProperty.image
+         
         ],
         (_, result) => {
           console.log('Data saved successfully');
          
-          console.log(result,createProperty.propertyaddress)
-          //navigation.goBack();
+          console.log(result)
+          navigation.goBack();
         },
         (_, error) => {
           console.error('Error saving data:', error);
@@ -347,7 +358,20 @@ const CreateProperty = () => {
     });
   };
 
-
+  const clearTable = () => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        'DELETE FROM Properties', // Replace 'Properties' with your table name
+        [],
+        (_, result) => {
+          console.log('Data cleared successfully');
+        },
+        (_, error) => {
+          console.error('Error clearing data:', error);
+        }
+      );
+    });
+  };
 
   const handleUpdateData = () => {
     db.transaction((tx) => {
@@ -377,7 +401,10 @@ const CreateProperty = () => {
         securitydeposit = ?,
         overlooking = ?,
         flooring = ?,
-        lifts = ?
+        lifts = ?,
+        address = ?,
+        phone = ?,
+        imageuri = ?
       WHERE id = ?
       `,
         [
@@ -404,9 +431,13 @@ const CreateProperty = () => {
           createProperty.overlooking,
           createProperty.flooring,
           createProperty.lifts,
+          createProperty.propertyaddress,
+          createProperty.phone,
+          createProperty.image,
           propertyDatas.id, // ID to identify the record to update
         ],
         (_, result) => {
+
           navigation.navigate('ListingProperty');
          
           // You may want to navigate to another screen or perform other actions
@@ -863,6 +894,7 @@ const CreateProperty = () => {
       </ScrollView>
       <TouchableOpacity style={[styles.buttonContainer, { backgroundColor: isValid ? colors.primaryColor : colors.grayColor }]}
         onPress={() => {
+          //clearTable()
           if (isValid) {
             if (propertyDatas != null) {
               handleUpdateData()

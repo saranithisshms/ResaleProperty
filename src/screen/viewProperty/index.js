@@ -34,7 +34,7 @@ const ViewProperty = () => {
 
 
 
-  console.log(propertyData.address)
+  console.log(propertyData.imageuri)
 
   // Define the saveValidation function
 
@@ -71,7 +71,7 @@ const ViewProperty = () => {
         <View style={styles.mainContainer}>
           <Image
             source={{
-              uri: 'https://coolhouseconcepts.com/wp-content/uploads/2018/05/Man-Cave-Ideas.jpg', // Replace with the actual URL of your image
+              uri: propertyData.imageuri ?  propertyData.imageuri : 'https://coolhouseconcepts.com/wp-content/uploads/2018/05/Man-Cave-Ideas.jpg', // Replace with the actual URL of your image
             }}// Replace with the actual path to your image
             style={styles.image}
           />

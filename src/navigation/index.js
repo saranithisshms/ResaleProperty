@@ -14,10 +14,10 @@ const Stack = createStackNavigator();
 const NavigationPages = () => {
   return (
     <NavigationContainer >
-      <Stack.Navigator initialRouteName="AddProperty" screenOptions={{ headerShown: false, }}   >
+      <Stack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false, }}   >
         <Stack.Screen name="Splash" component={SplashScreen} />
         <Stack.Screen name="ListingProperty" component={PropertyListing} />
-        <Stack.Screen name="CreateProperty" component={CreateProperty} />
+        <Stack.Screen name="CreateProperty" component={AddProperty} />
         <Stack.Screen name="ViewProperty" component={ViewProperty} />
         <Stack.Screen name="AddProperty" component={AddProperty} />
 
