@@ -6,14 +6,10 @@ import { NavigationProp, useNavigation, useRoute } from '@react-navigation/nativ
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import PropertyCard from '../../components/propertyListing';
 import { useFocusEffect } from '@react-navigation/native';
-
 import SQLite from 'react-native-sqlite-storage';
 import { ScrollView } from 'react-native-gesture-handler';
 import Toast from 'react-native-simple-toast';
 import { DimensionUtils } from '../../styles/dimension';
-
-
-
 
 
 const PropertyListing = () => {
@@ -31,10 +27,10 @@ const PropertyListing = () => {
       location: 'default',
     },
     () => {
-      console.log('Database opened successfully');
+    //  console.log('Database opened successfully');
     },
     (error) => {
-      console.error('Error opening database: ', error);
+    //  console.error('Error opening database: ', error);
     }
   );
 
@@ -66,19 +62,18 @@ const PropertyListing = () => {
           setPropertyData(userDataList)
         },
         (_, error) => {
-          console.error('Error fetching data:',);
+         // console.error('Error fetching data:',);
         }
       );
     });
 
   }
-  // console.log('propertList', propertyData)
+ 
 
 
   const onEditPress = (item) => {
 
-    //console.log(item)
-    /// navigation.navigate('CreateProperty', { propertyDatas: item });
+    
 
     navigation.navigate('ViewProperty', { propertyDatas: item });
 
@@ -98,14 +93,14 @@ const PropertyListing = () => {
         'DELETE FROM Properties WHERE id = ?',
         [id],
         (_, result) => {
-          console.log('Property deleted successfully');
+         
           Toast.show('Property deleted successfully', Toast.SHORT);
           getPropertyData()
           // You may want to update the propertyData state after deleting
           // For example, refetch and update the list of properties
         },
         (_, error) => {
-          console.error('Error deleting property:', error);
+          //console.error('Error deleting property:', error);
         }
       );
     });

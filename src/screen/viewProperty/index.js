@@ -32,13 +32,6 @@ const ViewProperty = () => {
   }, []);
 
 
-
-
-  console.log(propertyData.phone)
-
-  // Define the saveValidation function
-
-
   return (
     <View style={styles.mainContainer}>
       <Header
@@ -73,7 +66,7 @@ const ViewProperty = () => {
             <Image
               source={{
                 uri: propertyData.imageuri ? propertyData.imageuri : 'https://coolhouseconcepts.com/wp-content/uploads/2018/05/Man-Cave-Ideas.jpg', // Replace with the actual URL of your image
-              }}// Replace with the actual path to your image
+              }}
               style={styles.image}
             />
             : <Image
@@ -96,12 +89,12 @@ const ViewProperty = () => {
               <Text style={styles.pricetext}>{propertyData.monthlyRent} ₹ </Text>
             </View>
 
+          
+
             <View>
-              <Text style={{ fontWeight: 'bold', fontSize: 19, color: colors.black }}>OverView</Text>
+              <Text style={{ fontWeight: 'bold', fontSize: 19, paddingTop:10, color: colors.black, }}>OverView</Text>
             </View>
-
-
-            <View style={{ flexDirection: 'row', paddingTop: 5, }}>
+            <View style={{ flexDirection: 'row', paddingTop: 0, }}>
               <View style={{ flex: 1, }}>
                 <View style={styles.gap}>
                   <Text style={styles.subtitle}>
@@ -288,13 +281,13 @@ const styles = StyleSheet.create({
     paddingTop: 8
   },
   image: {
-    width: '100%', // Set the desired width
-    height: DimensionUtils(200), // Set the desired height
-    borderRadius: 4
+    width: '100%', 
+    height: DimensionUtils(200), 
+    resizeMode: 'cover',
   },
   subCont: {
-    paddingLeft: DimensionUtils(20),
-    paddingRight:DimensionUtils(20),
+    paddingLeft: DimensionUtils(15),
+    paddingRight:DimensionUtils(15),
     paddingTop:DimensionUtils(10),
 
   },

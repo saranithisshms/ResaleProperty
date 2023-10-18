@@ -9,15 +9,12 @@ import { type, PropertyType, owernerType, PossessionStatus, BHK, Bathroom, Carpa
 import SelectableChip from '../../components/chips';
 import { DimensionUtils } from '../../styles/dimension';
 import SQLite from 'react-native-sqlite-storage';
-
+import Toast from 'react-native-simple-toast';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Entypo  from 'react-native-vector-icons/Entypo';
+import Entypo from 'react-native-vector-icons/Entypo';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
-// import Toast from 'react-native-simple-toast';
-
 const CreateProperty = () => {
-
 
   const route = useRoute();
   const [propertyData, setPropertyData] = useState([]);
@@ -27,10 +24,10 @@ const CreateProperty = () => {
       location: 'default',
     },
     () => {
-      console.log('Database opened successfully');
+    //  console.log('Database opened successfully');
     },
     (error) => {
-      console.error('Error opening database: ', error);
+     // console.error('Error opening database: ', error);
     }
   );
 
@@ -63,10 +60,10 @@ const CreateProperty = () => {
     flooring: '',
     lifts: '',
     image: null,
-    propertyaddress:'',
-    mobilenumber:'',
+    propertyaddress: '',
+    mobilenumber: '',
 
- 
+
   });
 
   const [image, setImage] = useState({})
@@ -84,18 +81,18 @@ const CreateProperty = () => {
 
       setCreateProperty({ ...createProperty, image: response.assets[0].uri })
 
-      console.log(createProperty.image, response.assets[0].uri)
+     
     })
 
 
   };
 
 
- 
+
 
   const propertyDatas = route.params?.propertyDatas ?? null;
 
- 
+
 
   useEffect(() => {
     LogBox.ignoreLogs(['Warning message']);
@@ -107,7 +104,7 @@ const CreateProperty = () => {
 
 
   const editData = (propertyDatas) => {
-     console.log(propertyDatas.monthlyRent,propertyDatas.maintenaceCharge)
+   
     setCreateProperty({
       ...createProperty,
 
@@ -134,13 +131,13 @@ const CreateProperty = () => {
       overlooking: propertyDatas.overlooking,
       flooring: propertyDatas.flooring,
       lifts: propertyDatas.lifts,
-      propertyaddress:propertyDatas.address,
-      mobilenumber:propertyDatas.phone,
-      image:propertyDatas.imageuri
+      propertyaddress: propertyDatas.address,
+      mobilenumber: propertyDatas.phone,
+      image: propertyDatas.imageuri
 
     })
 
-   
+
   }
 
 
@@ -181,10 +178,10 @@ const CreateProperty = () => {
         `,
         [],
         () => {
-            console.log('Table created successfully');
+         // console.log('Table created successfully');
         },
         (_, error) => {
-          console.error('Error creating table:', error);
+         // console.error('Error creating table:', error);
         }
       );
     });
@@ -268,10 +265,10 @@ const CreateProperty = () => {
       createProperty.bhk !== '' &&
       createProperty.bathroom !== '' &&
       createProperty.faceing !== '' &&
-      createProperty.monthlyRent !== ''&&
-      createProperty.address !==''&&
-      createProperty.mobilenumber !== ' ' 
-    
+      createProperty.monthlyRent !== '' &&
+      createProperty.address !== '' &&
+      createProperty.mobilenumber !== ' '
+
 
     ) {
       return true;
@@ -282,8 +279,6 @@ const CreateProperty = () => {
   const isValid = saveValidation();
 
   /// SaveData 
-
-
   const handleSaveData = () => {
     db.transaction((tx) => {
       tx.executeSql(
@@ -347,16 +342,17 @@ const CreateProperty = () => {
           createProperty.propertyaddress,
           createProperty.mobilenumber,
           createProperty.image
-         
+
         ],
         (_, result) => {
-          console.log('Data saved successfully');
-         
-          console.log(result)
+         // console.log('Data saved successfully');
+
+        //  console.log(result)
           navigation.goBack();
+          Toast.show('Property Created successfully', Toast.SHORT);
         },
         (_, error) => {
-          console.error('Error saving data:', error);
+         // console.error('Error saving data:', error);
         }
       );
     });
@@ -368,18 +364,22 @@ const CreateProperty = () => {
         'DELETE FROM Properties', // Replace 'Properties' with your table name
         [],
         (_, result) => {
-          console.log('Data cleared successfully');
+         // console.log('Data cleared successfully');
         },
         (_, error) => {
-          console.error('Error clearing data:', error);
+        // console.error('Error clearing data:', error);
         }
       );
     });
   };
 
+
+  /// Update Data
+
   const handleUpdateData = () => {
     db.transaction((tx) => {
-   
+
+     console.log(createProperty.mobilenumber)
       tx.executeSql(
         `
       UPDATE Properties
@@ -410,7 +410,7 @@ const CreateProperty = () => {
         address = ?,
         phone = ?,
         imageuri = ?
-      WHERE id = ?
+        WHERE id = ?
       `,
         [
           createProperty.propertyName,
@@ -437,14 +437,14 @@ const CreateProperty = () => {
           createProperty.flooring,
           createProperty.lifts,
           createProperty.propertyaddress,
-          createProperty.phone,
+          createProperty.mobilenumber,
           createProperty.image,
           propertyDatas.id, // ID to identify the record to update
         ],
         (_, result) => {
-
+          Toast.show('Property Update successfully', Toast.SHORT);
           navigation.navigate('ListingProperty');
-         
+
           // You may want to navigate to another screen or perform other actions
         },
         (_, error) => {
@@ -459,7 +459,7 @@ const CreateProperty = () => {
       <Header
         containerStyle={styles.headerContainer}
         statusBarProps={{ backgroundColor: 'transparent' }}
-        centerComponent={{ text:'Property' , style: styles.heading }}
+        centerComponent={{ text: 'Property', style: styles.heading }}
         leftComponent={
           <View style={styles.headerleft}>
             <TouchableOpacity style={styles.addIcon} onPress={() => {
@@ -552,11 +552,11 @@ const CreateProperty = () => {
               mode="flat"
             />
           </View>
-          
+
           <View style={styles.smallgap}>
             <TextInput
               label={"LandLord / Builder Mobile Number *"}
-              onChangeText={(text) => setCreateProperty({ ...createProperty,mobilenumber: text })}
+              onChangeText={(text) => setCreateProperty({ ...createProperty, mobilenumber: text })}
               value={createProperty.mobilenumber}
               style={styles.textinputColor}
               mode="flat"
@@ -617,11 +617,11 @@ const CreateProperty = () => {
 
             {createProperty.image != null ?
 
-              <View style={{ paddingRight:10,paddingLeft:10 }}>
+              <View style={{ paddingRight: 10, paddingLeft: 10 }}>
                 <Image source={{ uri: createProperty.image }} style={styles.uploadImage} />
                 <View style={styles.deleteIcon}>
                   <TouchableOpacity
-                    onPress={() =>   setCreateProperty({ ...createProperty, image: null })}>
+                    onPress={() => setCreateProperty({ ...createProperty, image: null })}>
                     <View style={styles.removeCricle}>
                       <Entypo
                         name={'circle-with-cross'}
@@ -890,7 +890,7 @@ const CreateProperty = () => {
             </View>
           </View>
 
-         
+
 
         </View>
       </ScrollView>
@@ -939,7 +939,7 @@ const styles = StyleSheet.create({
   screenMargin: {
     paddingLeft: 10,
     paddingRight: 10,
-    paddingTop:14
+    paddingTop: 14
   },
   smallgap: {
     paddingTop: 15
@@ -953,7 +953,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.primaryColor,
-   
+
     width: '100%',
     paddingVertical: 15,
   },
@@ -1045,10 +1045,10 @@ const styles = StyleSheet.create({
   deleteIcon: {
     width: 25,
     height: 25,
-     right: -6,
-     top: -6,
+    right: -6,
+    top: -6,
     zIndex: 1,
-  
+
     position: 'absolute',
 
   },

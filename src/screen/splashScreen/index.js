@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View,Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-
+import { DimensionUtils } from '../../styles/dimension';
 import { colors } from '../../styles/colors';
 
 const SplashScreen = () => {
@@ -23,29 +23,52 @@ const SplashScreen = () => {
         index: 0,
         routes: [{ name: 'ListingProperty' }]
       });
-      
+
     }
   }, [isVisible, navigation]);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Resale Property</Text>
+      <View style={styles.imageContainer}>
+        <Image
+          source={require('../../assest/splash.jpg')}
+          style={styles.image}
+
+        />
+
+      </View>
+      <View>
+        <Text style={styles.text}>Resale Property</Text>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+   
+    width:'100%',
+    height:'100%',
+  
+    backgroundColor:colors.white
   },
   text: {
     textAlign: 'center',
     color: colors.primaryColor,
-    fontSize: 30,
+    fontSize: 25,
     fontWeight: 'bold',
+    paddingTop:10
   },
+  image: {
+    width: '100%', 
+    height: DimensionUtils(200), 
+   
+  },
+  imageContainer:{
+    paddingTop:DimensionUtils(250),
+    padding:10
+  }
+
 });
 
 export default SplashScreen;
