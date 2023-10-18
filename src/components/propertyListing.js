@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/FontAwesome'; // Import your icon li
 import { DimensionUtils } from "../styles/dimension";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const PropertyCard = ({ name,descripition, onEditPress, onDeletePress }) => {
+const PropertyCard = ({ name,descripition, type,Imageuri, onEditPress, onDeletePress }) => {
   return (
     <View
       style={[
@@ -15,17 +15,25 @@ const PropertyCard = ({ name,descripition, onEditPress, onDeletePress }) => {
       <View style={styles.buttonContainer}>
         <View style={{ flex: 1 }}>
           <View style={styles.row}>
+            {Imageuri ?
             <Image
               source={{
-                uri: 'https://coolhouseconcepts.com/wp-content/uploads/2018/05/Man-Cave-Ideas.jpg', // Replace with the actual URL of your image
+                uri: Imageuri
               }}// Replace with the actual path to your image
               style={styles.image}
-            />
+            />  : <Image    
+            
+            source={require('../assest/emptyImage.jpg')}
+            
+            style={styles.image}
+            
+            />      }
             <View style={styles.title}>
               <Text  numberOfLines={2} style={styles.text}>{name}</Text>
               <View>
                 <Text numberOfLines={2} style={styles.desText}>{descripition}</Text>
               </View>
+              <Text style={styles.desText}>Property Type : {type}</Text>
             </View>
           </View>
         </View>

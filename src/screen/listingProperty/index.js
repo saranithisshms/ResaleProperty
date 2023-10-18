@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, LogBox } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, LogBox, Image } from 'react-native';
 import colors from '../../styles/colors';
 import { Header, HeaderProps, } from '@rneui/themed';
 import { NavigationProp, useNavigation, useRoute } from '@react-navigation/native';
@@ -76,9 +76,9 @@ const PropertyListing = () => {
 
 
   const onEditPress = (item) => {
-  
+
     //console.log(item)
-   /// navigation.navigate('CreateProperty', { propertyDatas: item });
+    /// navigation.navigate('CreateProperty', { propertyDatas: item });
 
     navigation.navigate('ViewProperty', { propertyDatas: item });
 
@@ -142,6 +142,8 @@ const PropertyListing = () => {
                       <PropertyCard
                         name={user.propertyName}
                         descripition={user.descripition}
+                        type={user.type}
+                        Imageuri={user.imageuri}
                         onEditPress={() => onEditPress(user)}
                         onDeletePress={() => onDeletePress(user.id)}
 
@@ -153,6 +155,11 @@ const PropertyListing = () => {
             </> :
 
             <View style={styles.emptyState}>
+              <Image
+                source={require('../../assest/empty.jpg')}
+                style={styles.image}
+
+              />
               <Text style={styles.emptyText}>No property so far not Add</Text>
             </View>}
 
@@ -231,16 +238,32 @@ const styles = StyleSheet.create({
 
   },
   mainContainer: {
-    width: '100%', height: '100%'
+    width: '100%',
+    height: '100%',
+    backgroundColor: colors.white
   },
   addIcon: {
-    marginLeft: 10, paddingTop: 10
+    marginLeft: 10, 
+    paddingTop: 10
   },
-  emptyState:{
-    flex:1,justifyContent:'center',alignItems:'center',paddingTop:10 
+  emptyState: {
+    flex: 1, 
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop:
+      DimensionUtils(100),
+    padding: 5
   },
-  emptyText:{
-    fontWeight:'bold',fontSize:20
-  }
+  emptyText: {
+    fontWeight: 'bold', 
+    fontSize: 20,
+    color:colors.black,
+    paddingTop:20,
+  },
+  image: {
+    width: '100%', // Set the desired width
+    height: DimensionUtils(200), // Set the desired height
+    borderRadius: 4
+  },
 });
 export default PropertyListing;

@@ -34,7 +34,7 @@ const ViewProperty = () => {
 
 
 
-  console.log(propertyData.imageuri)
+  console.log(propertyData.phone)
 
   // Define the saveValidation function
 
@@ -69,26 +69,31 @@ const ViewProperty = () => {
       />
       <ScrollView >
         <View style={styles.mainContainer}>
-          <Image
-            source={{
-              uri: propertyData.imageuri ?  propertyData.imageuri : 'https://coolhouseconcepts.com/wp-content/uploads/2018/05/Man-Cave-Ideas.jpg', // Replace with the actual URL of your image
-            }}// Replace with the actual path to your image
-            style={styles.image}
-          />
+          {propertyData.imageuri ?
+            <Image
+              source={{
+                uri: propertyData.imageuri ? propertyData.imageuri : 'https://coolhouseconcepts.com/wp-content/uploads/2018/05/Man-Cave-Ideas.jpg', // Replace with the actual URL of your image
+              }}// Replace with the actual path to your image
+              style={styles.image}
+            />
+            : <Image
+              source={require('../../assest/emptyImage.jpg')}
+              style={styles.image}
 
+            />}
           <View style={styles.subCont}>
 
             <View>
               <Text style={styles.title}>{propertyData.propertyName}</Text>
             </View>
             <Text style={styles.subtitle}>Address:</Text>
-            <Text  style={styles.normalText}>{propertyData.address} sdsdsdksdsojdsdpsjdpsdpsjdspidsidpjspdis</Text>
+            <Text style={styles.normalText}>{propertyData.address}</Text>
 
             <View>
               <Text style={styles.normalText}>Area {propertyData.sqft} sq.ft  </Text>
             </View>
             <View>
-              <Text style={styles.pricetext}>{propertyData.monthlyRent} </Text>
+              <Text style={styles.pricetext}>{propertyData.monthlyRent} ₹ </Text>
             </View>
 
             <View>
@@ -96,8 +101,8 @@ const ViewProperty = () => {
             </View>
 
 
-            <View style={{ flexDirection: 'row', paddingTop: 5 }}>
-              <View style={{ flex: 1 }}>
+            <View style={{ flexDirection: 'row', paddingTop: 5, }}>
+              <View style={{ flex: 1, }}>
                 <View style={styles.gap}>
                   <Text style={styles.subtitle}>
                     Built Area
@@ -114,22 +119,24 @@ const ViewProperty = () => {
                     {propertyData.bhk}
                   </Text>
                 </View>
-                <View style={styles.gap}>
-                  <Text style={styles.subtitle}>
-                    Car parking
-                  </Text>
-                  <Text style={styles.overText}>
-                    {propertyData.carparking}
-                  </Text>
-                </View>
-                <View style={styles.gap}>
-                  <Text style={styles.subtitle}>
-                    Two wheeler parking
-                  </Text>
-                  <Text style={styles.overText}>
-                    {propertyData.twowheelerparking}
-                  </Text>
-                </View>
+                {propertyData.carparking &&
+                  <View style={styles.gap}>
+                    <Text style={styles.subtitle}>
+                      Car parking
+                    </Text>
+                    <Text style={styles.overText}>
+                      {propertyData.carparking}
+                    </Text>
+                  </View>}
+                {propertyData.twowheelerparking &&
+                  <View style={styles.gap}>
+                    <Text style={styles.subtitle}>
+                      Two wheeler parking
+                    </Text>
+                    <Text style={styles.overText}>
+                      {propertyData.twowheelerparking}
+                    </Text>
+                  </View>}
                 <View style={styles.gap}>
                   <Text style={styles.subtitle}>
                     LandLord
@@ -138,17 +145,19 @@ const ViewProperty = () => {
                     {propertyData.BulilderName}
                   </Text>
                 </View>
-                <View style={styles.gap}>
-                  <Text style={styles.subtitle}>
-                    MobileNumber
-                  </Text>
-                  <Text style={styles.overText}>
-                    123456789
-                  </Text>
-                </View>
+
+                {propertyData.phone &&
+                  <View style={styles.gap}>
+                    <Text style={styles.subtitle}>
+                      MobileNumber
+                    </Text>
+                    <Text style={styles.overText}>
+                      {propertyData.phone}
+                    </Text>
+                  </View>}
 
               </View>
-              <View style={{ flex: 0.8, paddingLeft: 15, }}>
+              <View style={{ flex: 0.8, paddingLeft: 12, }}>
                 {propertyDatas.possessionstatus &&
                   <View style={styles.gap}>
                     <Text style={styles.subtitle}>
@@ -201,7 +210,17 @@ const ViewProperty = () => {
                       {propertyData.securitydeposit}
                     </Text>
                   </View>}
+                  {propertyData.lifts &&
+                <View style={styles.gap}>
+                  <Text style={styles.subtitle}>
+                    No.Lifts
+                  </Text>
+                  <Text style={styles.overText}>
+                    {propertyData.lifts}
+                  </Text>
+                </View>}
               </View>
+             
             </View>
 
             <View style={styles.titlegap}>
@@ -232,7 +251,7 @@ const ViewProperty = () => {
                     Amount
                   </Text>
                   <Text style={styles.overText}>
-                    {propertyData.monthlyRent} sq.ft.
+                    {propertyData.monthlyRent} ₹
                   </Text>
                 </View>
               </View>
@@ -274,8 +293,9 @@ const styles = StyleSheet.create({
     borderRadius: 4
   },
   subCont: {
-    paddingLeft: 10,
-    paddingRight: 10,
+    paddingLeft: DimensionUtils(20),
+    paddingRight:DimensionUtils(20),
+    paddingTop:DimensionUtils(10),
 
   },
   mainContainer: {

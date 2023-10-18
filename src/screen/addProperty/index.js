@@ -95,7 +95,7 @@ const CreateProperty = () => {
 
   const propertyDatas = route.params?.propertyDatas ?? null;
 
-  // console.log('getData>>>>', propertyDatas)
+ 
 
   useEffect(() => {
     LogBox.ignoreLogs(['Warning message']);
@@ -140,7 +140,7 @@ const CreateProperty = () => {
 
     })
 
-    console.log("setData",createProperty.monthlyRent)
+   
   }
 
 
@@ -268,7 +268,11 @@ const CreateProperty = () => {
       createProperty.bhk !== '' &&
       createProperty.bathroom !== '' &&
       createProperty.faceing !== '' &&
-      createProperty.monthlyRent !== ''
+      createProperty.monthlyRent !== ''&&
+      createProperty.address !==''&&
+      createProperty.mobilenumber !== ' ' 
+    
+
     ) {
       return true;
     } else {
@@ -375,6 +379,7 @@ const CreateProperty = () => {
 
   const handleUpdateData = () => {
     db.transaction((tx) => {
+   
       tx.executeSql(
         `
       UPDATE Properties
@@ -527,16 +532,6 @@ const CreateProperty = () => {
             />
           </View>
 
-          <View style={styles.smallgap}>
-            <TextInput
-              label={"Maintenace Charges"}
-              onChangeText={(text) => setCreateProperty({ ...createProperty, maintenaceCharges: text })}
-              value={createProperty?.maintenaceCharges?.toString()}
-              style={styles.textinputColor}
-              mode="flat"
-              keyboardType="numeric"
-            />
-          </View>
 
           <View style={styles.smallgap}>
             <TextInput
@@ -547,18 +542,28 @@ const CreateProperty = () => {
               mode="flat"
               keyboardType="numeric"
             />
-
-
           </View>
-
           <View style={styles.smallgap}>
             <TextInput
-              label="Builder Name *"
+              label="LandLord / Builder Name *"
               onChangeText={(text) => setCreateProperty({ ...createProperty, BulilderName: text })}
               value={createProperty.BulilderName}
               style={styles.textinputColor}
               mode="flat"
             />
+          </View>
+          
+          <View style={styles.smallgap}>
+            <TextInput
+              label={"LandLord / Builder Mobile Number *"}
+              onChangeText={(text) => setCreateProperty({ ...createProperty,mobilenumber: text })}
+              value={createProperty.mobilenumber}
+              style={styles.textinputColor}
+              mode="flat"
+              keyboardType="numeric"
+              maxLength={10}
+            />
+
           </View>
           <View style={{ flexDirection: 'row', paddingTop: 20 }}>
             <View style={{ flex: 1 }}>
@@ -580,7 +585,6 @@ const CreateProperty = () => {
                 keyboardType="numeric"
               />
             </View>
-
           </View>
 
           <View style={{ flexDirection: 'row', paddingTop: 20 }}>
@@ -636,8 +640,6 @@ const CreateProperty = () => {
               </TouchableOpacity>}
 
           </View>
-
-
 
           <View style={styles.smallgap}>
 

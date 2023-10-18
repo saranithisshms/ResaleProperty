@@ -136,7 +136,7 @@ const CreateProperty = () => {
 
     })
 
-    console.log("setData",createProperty.monthlyRent)
+   
   }
 
 
