@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Platform, Image,Alert } from 
 import Icon from 'react-native-vector-icons/FontAwesome'; // Import your icon library of choice
 import { DimensionUtils } from "../styles/dimension";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import colors from '../styles/colors';
 
 const PropertyCard = ({ name,descripition, type,Imageuri, onEditPress, onDeletePress }) => {
   return (
@@ -33,7 +34,7 @@ const PropertyCard = ({ name,descripition, type,Imageuri, onEditPress, onDeleteP
               <View>
                 <Text numberOfLines={2} style={styles.desText}>{descripition}</Text>
               </View>
-              <Text style={styles.desText}>Property Type : {type}</Text>
+              <Text style={styles.typeText}> {type}</Text>
             </View>
           </View>
         </View>
@@ -68,7 +69,9 @@ const PropertyCard = ({ name,descripition, type,Imageuri, onEditPress, onDeleteP
             </TouchableOpacity>
           </View>
         </View>
+        
       </View>
+      
     </View>
   );
 };
@@ -84,6 +87,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 8,
     fontWeight: 'bold',
+    color:colors.black
   },
   desText: {
     fontSize: 14,
@@ -117,6 +121,10 @@ const styles = StyleSheet.create({
   },
   title: {
     paddingLeft: 10
+  },
+  typeText:{
+    fontSize:16,
+    color:colors.darkgrayColor
   }
 });
 

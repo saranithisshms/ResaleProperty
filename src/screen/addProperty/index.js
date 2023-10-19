@@ -17,7 +17,7 @@ import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 const CreateProperty = () => {
 
   const route = useRoute();
-  const [propertyData, setPropertyData] = useState([]);
+  const [heading, setHeading] = useState('Add Property');
   const db = SQLite.openDatabase(
     {
       name: 'propertyDatasImage.db',
@@ -66,7 +66,6 @@ const CreateProperty = () => {
 
   });
 
-  const [image, setImage] = useState({})
 
   const handleImagePicker = () => {
 
@@ -99,6 +98,7 @@ const CreateProperty = () => {
     createTable()
     if (propertyDatas != null && propertyDatas != undefined) {
       editData(propertyDatas)
+      setHeading('Update Property')
     }
   }, []);
 
@@ -379,7 +379,7 @@ const CreateProperty = () => {
   const handleUpdateData = () => {
     db.transaction((tx) => {
 
-     console.log(createProperty.mobilenumber)
+     
       tx.executeSql(
         `
       UPDATE Properties
@@ -459,7 +459,7 @@ const CreateProperty = () => {
       <Header
         containerStyle={styles.headerContainer}
         statusBarProps={{ backgroundColor: 'transparent' }}
-        centerComponent={{ text: 'Property', style: styles.heading }}
+        centerComponent={{ text: heading, style: styles.heading }}
         leftComponent={
           <View style={styles.headerleft}>
             <TouchableOpacity style={styles.addIcon} onPress={() => {
