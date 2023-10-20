@@ -1,26 +1,23 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import LoaderKit from 'react-native-loader-kit';
 import colors from '../styles/colors';
+import { ActivityIndicator } from 'react-native-paper';
 
 const Loading = () => {
     return (
         <View style={styles.container}>
-            <LoaderKit
-                style={{ width: 50, height: 50 }}
-                name={'BallPulse'} 
-                size={50} 
-                color={colors.primaryColor}
-            />
+            <ActivityIndicator animating={true}  color={colors.primaryColor} />
+        
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+      
         justifyContent: 'center',
         alignItems: 'center',
+        padding:50
     },
 });
 

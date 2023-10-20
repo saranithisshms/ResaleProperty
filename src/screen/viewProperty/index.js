@@ -1,23 +1,34 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, LogBox, ScrollView, Image } from 'react-native';
-
+import { Text, View, StyleSheet, TouchableOpacity, LogBox, ScrollView, Alert, Image, Button } from 'react-native';
 import colors from '../../styles/colors';
 import { Header, HeaderProps, } from '@rneui/themed';
 import { NavigationProp, useNavigation, useRoute } from '@react-navigation/native';
-import { DimensionUtils } from "../../styles/dimension";
-
+import { DimensionUtils } from '../../styles/dimension';
+import SQLite from 'react-native-sqlite-storage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import Loading from '../../components/loader';
 
-
-// import Toast from 'react-native-simple-toast';
 
 const ViewProperty = () => {
 
-
   const route = useRoute();
+ 
   const [propertyData, setPropertyData] = useState('');
+  const [loader, setLoader] = useState(false);
 
+  const db = SQLite.openDatabase(
+    {
+      name: 'propertyDatasImage.db',
+      location: 'default',
+    },
+    () => {
+    //  console.log('Database opened successfully');
+    },
+    (error) => {
+     // console.error('Error opening database: ', error);
+    }
+  );
 
   const navigation = useNavigation();
 
@@ -25,11 +36,36 @@ const ViewProperty = () => {
 
   useEffect(() => {
     LogBox.ignoreLogs(['Warning message']);
-
+   
     if (propertyDatas != null && propertyDatas != undefined) {
-      setPropertyData(propertyDatas)
+      
+      getPropertyDataById(propertyDatas.id)
     }
   }, []);
+
+
+  const getPropertyDataById = async (id) => {
+    setLoader(true)
+    await db.transaction((tx) => {
+      tx.executeSql(
+        'SELECT * FROM Properties where id = ?',
+        [id],
+        (_, { rows }) => {
+          if (rows.length > 0) {
+            const property = rows.item(0);
+            setPropertyData(property); // Update the propertyData state
+            console.log('Fetched property by ID:', property);
+          } else {
+            console.log('No property found with the given ID.');
+          }
+        },
+        (_, error) => {
+          console.error('Error fetching data by ID:', error);
+        }
+      );
+    });
+    setLoader(false)
+  };
 
 
   return (
@@ -61,6 +97,7 @@ const ViewProperty = () => {
 
       />
       <ScrollView >
+      {loader ? <Loading /> :
         <View style={styles.mainContainer}>
           {propertyData.imageuri ?
             <Image
@@ -89,10 +126,13 @@ const ViewProperty = () => {
               <Text style={styles.pricetext}>{propertyData.monthlyRent} ₹ </Text>
             </View>
 
-          
+            <View>
+              <Text style={styles.subtitle}>Description:</Text>
+              <Text style={styles.normalText}>{propertyData.descripition}</Text>
+            </View>
 
             <View>
-              <Text style={{ fontWeight: 'bold', fontSize: 19, paddingTop:10, color: colors.black, }}>OverView</Text>
+              <Text style={{ fontWeight: 'bold', fontSize: 19, paddingTop: 10, color: colors.black, }}>OverView</Text>
             </View>
             <View style={{ flexDirection: 'row', paddingTop: 0, }}>
               <View style={{ flex: 1, }}>
@@ -203,17 +243,17 @@ const ViewProperty = () => {
                       {propertyData.securitydeposit}
                     </Text>
                   </View>}
-                  {propertyData.lifts &&
-                <View style={styles.gap}>
-                  <Text style={styles.subtitle}>
-                    No.Lifts
-                  </Text>
-                  <Text style={styles.overText}>
-                    {propertyData.lifts}
-                  </Text>
-                </View>}
+                {propertyData.lifts &&
+                  <View style={styles.gap}>
+                    <Text style={styles.subtitle}>
+                      No.Lifts
+                    </Text>
+                    <Text style={styles.overText}>
+                      {propertyData.lifts}
+                    </Text>
+                  </View>}
               </View>
-             
+
             </View>
 
             <View style={styles.titlegap}>
@@ -250,13 +290,12 @@ const ViewProperty = () => {
               </View>
             </View>
           </View>
-        </View>
+        </View>  }
       </ScrollView>
 
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
 
@@ -281,14 +320,14 @@ const styles = StyleSheet.create({
     paddingTop: 8
   },
   image: {
-    width: '100%', 
-    height: DimensionUtils(200), 
+    width: '100%',
+    height: DimensionUtils(200),
     resizeMode: 'cover',
   },
   subCont: {
     paddingLeft: DimensionUtils(15),
-    paddingRight:DimensionUtils(15),
-    paddingTop:DimensionUtils(10),
+    paddingRight: DimensionUtils(15),
+    paddingTop: DimensionUtils(10),
 
   },
   mainContainer: {
@@ -330,4 +369,6 @@ const styles = StyleSheet.create({
   }
 
 });
+
+
 export default ViewProperty;

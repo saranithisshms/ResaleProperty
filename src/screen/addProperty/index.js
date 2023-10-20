@@ -13,11 +13,14 @@ import Toast from 'react-native-simple-toast';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import Loading from '../../components/loader';
 
 const CreateProperty = () => {
 
   const route = useRoute();
   const [heading, setHeading] = useState('Add Property');
+  const [loader, setLoader] = useState(false);
+
   const db = SQLite.openDatabase(
     {
       name: 'propertyDatasImage.db',
@@ -97,48 +100,11 @@ const CreateProperty = () => {
     LogBox.ignoreLogs(['Warning message']);
     createTable()
     if (propertyDatas != null && propertyDatas != undefined) {
-      editData(propertyDatas)
       setHeading('Update Property')
+      getPropertyDataById(propertyDatas.id)
+      // editData(propertyDatas)
     }
   }, []);
-
-
-  const editData = (propertyDatas) => {
-   
-    setCreateProperty({
-      ...createProperty,
-
-      propertyName: propertyDatas.propertyName,
-      descripition: propertyDatas.descripition,
-      BuildupArea: propertyDatas.BuildupArea,
-      sqft: propertyDatas.sqft,
-      AgeofProperty: propertyDatas.AgeofProperty,
-      months: propertyDatas.months,
-      monthlyRent: propertyDatas.monthlyRent,
-      BulilderName: propertyDatas.BulilderName,
-      maintenaceCharges: propertyDatas.maintenaceCharge,
-      type: propertyDatas.type,
-      propertytype: propertyDatas.propertytype,
-      owernertype: propertyDatas.owernertype,
-      possessionstatus: propertyDatas.possessionstatus,
-      bhk: propertyDatas.bhk,
-      bathroom: propertyDatas.bathroom,
-      furnishedtype: propertyDatas.furnishedtype,
-      carparking: propertyDatas.carparking,
-      twowheelerparking: propertyDatas.twowheelerparking,
-      faceing: propertyDatas.faceing,
-      securitydeposit: propertyDatas.securitydeposit,
-      overlooking: propertyDatas.overlooking,
-      flooring: propertyDatas.flooring,
-      lifts: propertyDatas.lifts,
-      propertyaddress: propertyDatas.address,
-      mobilenumber: propertyDatas.phone,
-      image: propertyDatas.imageuri
-
-    })
-
-
-  }
 
 
   const createTable = () => {
@@ -374,12 +340,68 @@ const CreateProperty = () => {
   };
 
 
+  const getPropertyDataById = async (id) => {
+    setLoader(true)
+    await db.transaction((tx) => {
+      tx.executeSql(
+        'SELECT * FROM Properties where id = ?',
+        [id],
+        (_, { rows }) => {
+          if (rows.length > 0) {
+            const property = rows.item(0);
+            
+            editData(property)
+          } else {
+            console.log('No property found with the given ID.');
+          }
+        },
+        (_, error) => {
+          console.error('Error fetching data by ID:', error);
+        }
+      );
+    });
+  }
+  const editData = (propertyDatas) => {
+   
+    setCreateProperty({
+      ...createProperty,
+
+      propertyName: propertyDatas.propertyName,
+      descripition: propertyDatas.descripition,
+      BuildupArea: propertyDatas.BuildupArea,
+      sqft: propertyDatas.sqft,
+      AgeofProperty: propertyDatas.AgeofProperty,
+      months: propertyDatas.months,
+      monthlyRent: propertyDatas.monthlyRent,
+      BulilderName: propertyDatas.BulilderName,
+      maintenaceCharges: propertyDatas.maintenaceCharge,
+      type: propertyDatas.type,
+      propertytype: propertyDatas.propertytype,
+      owernertype: propertyDatas.owernertype,
+      possessionstatus: propertyDatas.possessionstatus,
+      bhk: propertyDatas.bhk,
+      bathroom: propertyDatas.bathroom,
+      furnishedtype: propertyDatas.furnishedtype,
+      carparking: propertyDatas.carparking,
+      twowheelerparking: propertyDatas.twowheelerparking,
+      faceing: propertyDatas.faceing,
+      securitydeposit: propertyDatas.securitydeposit,
+      overlooking: propertyDatas.overlooking,
+      flooring: propertyDatas.flooring,
+      lifts: propertyDatas.lifts,
+      propertyaddress: propertyDatas.address,
+      mobilenumber: propertyDatas.phone,
+      image: propertyDatas.imageuri
+
+    })
+    setLoader(false)
+
+  }
   /// Update Data
 
   const handleUpdateData = () => {
+    setLoader(true)
     db.transaction((tx) => {
-
-     
       tx.executeSql(
         `
       UPDATE Properties
@@ -452,6 +474,7 @@ const CreateProperty = () => {
         }
       );
     });
+    setLoader(false)
   };
 
   return (
@@ -472,7 +495,7 @@ const CreateProperty = () => {
 
       />
       <ScrollView>
-
+      {loader ? <Loading /> :
         <View style={styles.screenMargin}>
 
           <View style={styles.note}>
@@ -707,8 +730,8 @@ const CreateProperty = () => {
                   <View key={index} style={{ flexWrap: 'wrap', }}>
                     <SelectableChip
                       key={index}
-                      label={item.name.toString()}
-                      isSelected={item.name === createProperty.bhk}
+                      label={item.name}
+                      isSelected={item.name === createProperty.bhk.toString()}
                       onPress={() => handleChipSelection(item, 'bhk')}
 
                     />
@@ -726,8 +749,8 @@ const CreateProperty = () => {
                   <View key={index} style={{ flexWrap: 'wrap', }}>
                     <SelectableChip
                       key={index}
-                      label={item.name.toString()}
-                      isSelected={item.name === createProperty.bathroom}
+                      label={item.name}
+                      isSelected={item.name === createProperty.bathroom.toString()}
                       onPress={() => handleChipSelection(item, 'bathroom')}
 
                     />
@@ -889,10 +912,7 @@ const CreateProperty = () => {
               })}
             </View>
           </View>
-
-
-
-        </View>
+        </View> }
       </ScrollView>
       <TouchableOpacity style={[styles.buttonContainer, { backgroundColor: isValid ? colors.primaryColor : colors.grayColor }]}
         onPress={() => {
@@ -909,10 +929,6 @@ const CreateProperty = () => {
       >
         <Text style={styles.buttonTexts}>{propertyDatas != null ? "Update" : 'Create'}</Text>
       </TouchableOpacity>
-
-
-
-
     </View>
   );
 };

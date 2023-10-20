@@ -10,7 +10,7 @@ import SQLite from 'react-native-sqlite-storage';
 import { ScrollView } from 'react-native-gesture-handler';
 import Toast from 'react-native-simple-toast';
 import { DimensionUtils } from '../../styles/dimension';
-
+import Loading from '../../components/loader';
 
 const PropertyListing = () => {
 
@@ -20,6 +20,8 @@ const PropertyListing = () => {
 
   const [propertyData, setPropertyData] = useState([]);
 
+  const [loader, setLoader] = useState(false);
+
   // Open the database
   const db = SQLite.openDatabase(
     {
@@ -27,10 +29,10 @@ const PropertyListing = () => {
       location: 'default',
     },
     () => {
-    //  console.log('Database opened successfully');
+      //  console.log('Database opened successfully');
     },
     (error) => {
-    //  console.error('Error opening database: ', error);
+      //  console.error('Error opening database: ', error);
     }
   );
 
@@ -41,14 +43,15 @@ const PropertyListing = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      getPropertyData(); // Call the get function when the screen gains focus
+      getPropertyData();
+
     }, [])
   );
 
 
 
   const getPropertyData = () => {
-
+    setLoader(true)
     db.transaction((tx) => {
       tx.executeSql(
         `SELECT * FROM Properties`,
@@ -62,38 +65,32 @@ const PropertyListing = () => {
           setPropertyData(userDataList)
         },
         (_, error) => {
-         // console.error('Error fetching data:',);
+          // console.error('Error fetching data:',);
         }
       );
     });
+    setLoader(false)
 
   }
- 
+
+
 
 
   const onEditPress = (item) => {
-
-    
 
     navigation.navigate('ViewProperty', { propertyDatas: item });
 
   }
 
 
-
-  useEffect(() => {
-    LogBox.ignoreLogs(['Warning message']);
-
-  }, []);
-
-
   const onDeletePress = (id) => {
+
     db.transaction((tx) => {
       tx.executeSql(
         'DELETE FROM Properties WHERE id = ?',
         [id],
         (_, result) => {
-         
+
           Toast.show('Property deleted successfully', Toast.SHORT);
           getPropertyData()
           // You may want to update the propertyData state after deleting
@@ -126,40 +123,42 @@ const PropertyListing = () => {
         }
 
       />
+
       <ScrollView>
-        <View>
-          {propertyData.length != 0 ?
-            <>
-              {
-                propertyData.map((user) => {
-                  return (
-                    <View key={user.id}>
-                      <PropertyCard
-                        name={user.propertyName}
-                        descripition={user.descripition}
-                        type={user.type}
-                        Imageuri={user.imageuri}
-                        onEditPress={() => onEditPress(user)}
-                        onDeletePress={() => onDeletePress(user.id)}
+        {loader ? <Loading /> :
+          <View>
+            {propertyData.length != 0 ?
+              <>
+                {
+                  propertyData.map((user) => {
+                    return (
+                      <View key={user.id}>
+                        <PropertyCard
+                          name={user.propertyName}
+                          descripition={user.descripition}
+                          type={user.type}
+                          Imageuri={user.imageuri}
+                          onEditPress={() => onEditPress(user)}
+                          onDeletePress={() => onDeletePress(user.id)}
 
-                      />
-                    </View>
-                  );
-                })
-              }
-            </> :
+                        />
+                      </View>
+                    );
+                  })
+                }
+              </> :
 
-            <View style={styles.emptyState}>
-              <Image
-                source={require('../../assest/empty.jpg')}
-                style={styles.image}
+              <View style={styles.emptyState}>
+                <Image
+                  source={require('../../assest/empty.jpg')}
+                  style={styles.image}
 
-              />
-              <Text style={styles.emptyText}>No property so far not Add</Text>
-            </View>}
+                />
+                <Text style={styles.emptyText}>No property so far not Add</Text>
+              </View>}
 
-        </View>
-
+          </View>
+        }
 
       </ScrollView>
     </View>
@@ -238,11 +237,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white
   },
   addIcon: {
-    marginLeft: 10, 
+    marginLeft: 10,
     paddingTop: 10
   },
   emptyState: {
-    flex: 1, 
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     paddingTop:
@@ -250,10 +249,10 @@ const styles = StyleSheet.create({
     padding: 5
   },
   emptyText: {
-    fontWeight: 'bold', 
+    fontWeight: 'bold',
     fontSize: 20,
-    color:colors.black,
-    paddingTop:20,
+    color: colors.black,
+    paddingTop: 20,
   },
   image: {
     width: '100%', // Set the desired width
