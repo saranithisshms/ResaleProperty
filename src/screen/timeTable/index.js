@@ -92,7 +92,6 @@ const CustomCalendar = () => {
       </View>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigateWeek(-1)}>
-          
           <Entypo name="chevron-left" size={24} color={'#000'} />
         </TouchableOpacity>
         <Text style={styles.headerText}>
