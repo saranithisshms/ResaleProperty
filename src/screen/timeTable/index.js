@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 import moment from 'moment';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 
 const schoolTimetable = {
@@ -33,6 +34,7 @@ const CustomCalendar = () => {
   const [selectedDate, setSelectedDate] = useState(currentDate);
   const [daysInWeek, setDaysInWeek] = useState([]);
   const [selectedDayTimetable, setSelectedDayTimetable] = useState([]);
+  const itemColors = ['#63C3C6', '#EABB34', '#13A5F3', '#F96D0C', '#F96D0C'];
 
   const navigateWeek = (step) => {
     const newDate = new Date(selectedDate);
@@ -69,39 +71,71 @@ const CustomCalendar = () => {
     setSelectedDate(day);
     setSelectedDayTimetable(schoolTimetable[dayOfWeek]);
 
-    
+
+  };
+
+  const getWeekRange = (date) => {
+    const weekStart = new Date(date);
+    weekStart.setDate(date.getDate() - date.getDay());
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 6);
+    const monthName = weekStart.toLocaleString('en-us', { month: 'short' });
+    return `${weekStart.getDate()} ${monthName}  -  ${weekEnd.getDate()} ${monthName} `;
   };
 
   return (
     <View style={styles.container}>
+      <View>
+        <Text style={styles.headerTitle}>
+          Timetable
+        </Text>
+      </View>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigateWeek(-1)}>
-          <Text>{'<'} Prev Week</Text>
+          
+          <Entypo name="chevron-left" size={24} color={'#000'} />
         </TouchableOpacity>
         <Text style={styles.headerText}>
-          {selectedDate.toLocaleString('en-us', { month: 'short' })} {selectedDate.getDate()} 
+          {getWeekRange(selectedDate)}
         </Text>
         <TouchableOpacity onPress={() => navigateWeek(1)}>
-          <Text>Next Week {'>'}</Text>
+          <Entypo name="chevron-right" size={24} color={'#000'} />
         </TouchableOpacity>
       </View>
       <View style={styles.weekDisplay}>
-        {daysInWeek.map((day, index) => (
-          <TouchableOpacity
-            key={index}
-            style={[styles.dayItem, day.getTime() === selectedDate.getTime() ? styles.selectedDay : null]}
-            onPress={() => handleDaySelect(day)}
-          >
-            <Text style={styles.dayNumber}>{day.getDate()}</Text>
-          </TouchableOpacity>
-        ))}
+        {
+          daysInWeek.map((day, index) => {
+            const date = moment(day)
+            const dayOfWeek = date.format('dd');
+            const isCurrentDay = date.isSame(moment(), 'day');
+            return (
+              <TouchableOpacity
+                key={index}
+                style={[styles.dayItem, day.getTime() === selectedDate.getTime() ? styles.selectedDay : null]}
+                onPress={() => handleDaySelect(day)}
+              >
+
+                <Text style={[styles.dayNumber, day.getTime() === selectedDate.getTime() ? styles.selecteddayNumber : null]}>
+                  {dayOfWeek}
+                </Text>
+                <Text style={[styles.dayNumber, day.getTime() === selectedDate.getTime() ? styles.selecteddayNumber : null]}>{day.getDate()}</Text>
+                {isCurrentDay && <View style={styles.currentDayCircle} />}
+
+              </TouchableOpacity>
+            );
+          })
+        }
       </View>
       <View style={styles.timetable}>
         <FlatList
           data={selectedDayTimetable}
           keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
-            <Text style={styles.timetableText}>{item}</Text>
+          renderItem={({ item, index }) => (
+            <View style={{ padding: 10 }}>
+              <View style={{ padding: 20, borderRadius: 10, backgroundColor: itemColors[index % itemColors.length] }}>
+                <Text style={styles.timetableText}>{item}</Text>
+              </View>
+            </View>
           )}
         />
       </View>
@@ -112,12 +146,22 @@ const CustomCalendar = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#ffff'
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
+
+    shadowColor: 'black',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
+    backgroundColor: 'white',
+    borderRadius: 8,
+    padding: 10,
+    margin: 8,
   },
   headerText: {
     fontSize: 18,
@@ -130,20 +174,46 @@ const styles = StyleSheet.create({
   },
   dayItem: {
     alignItems: 'center',
+    backgroundColor: '#EDF5F4',
+    padding: 10,
+    borderRadius: 20
+
   },
   selectedDay: {
-    backgroundColor: 'blue',
+    backgroundColor: '#0CF9DC',
+    padding: 10,
+    borderRadius: 20
   },
   dayNumber: {
-    fontSize: 24,
+    fontSize: 18,
+  },
+  selecteddayNumber: {
+    fontSize: 18,
+    color: '#fff',
+    fontWeight: 'bold'
   },
   timetable: {
     padding: 20,
-    backgroundColor: '#f0f0f0',
+
   },
   timetableText: {
     fontSize: 16,
     color: '#000',
+  },
+  headerTitle: {
+    fontSize: 24,
+    color: '#000',
+    fontWeight: 'bold',
+    paddingLeft: 10,
+    paddingTop: 10
+  },
+  currentDayCircle: {
+    width: 8,
+    height: 8,
+    backgroundColor: '#0CF9DC',
+    borderRadius: 4,
+    top: 4,
+    left: 2,
   },
 });
 
